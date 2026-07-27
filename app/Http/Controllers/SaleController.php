@@ -14,6 +14,46 @@ use OpenApi\Attributes as OA;
 
 class SaleController extends Controller
 {
+    // =======================================================
+    // 1. MÉTODO PARA EL HISTORIAL (GET)
+    // =======================================================
+    #[OA\Get(
+        path: "/sales",
+        summary: "Obtener historial de ventas",
+        description: "Recupera todas las ventas registradas en el sistema, ordenadas de la más reciente a la más antigua, incluyendo el detalle de los productos vendidos.",
+        security: [["sanctum" => []]],
+        tags: ["Ventas"]
+    )]
+    #[OA\Response(
+        response: 200,
+        description: "Historial de ventas recuperado con éxito",
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: "success", type: "boolean", example: true),
+                new OA\Property(property: "message", type: "string", example: "Historial recuperado con éxito."),
+                new OA\Property(
+                    property: "data",
+                    type: "array",
+                    items: new OA\Items(type: "object")
+                )
+            ]
+        )
+    )]
+    public function index()
+    {
+        // Traemos todas las ventas, incluyendo sus items y los datos del producto
+        $sales = Sale::with('items.product')->orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Historial recuperado con éxito.',
+            'data' => $sales
+        ], 200);
+    }
+
+    // =======================================================
+    // 2. MÉTODO PARA PROCESAR LA VENTA (POST)
+    // =======================================================
     #[OA\Post(
         path: "/sales",
         summary: "Procesar nueva venta",

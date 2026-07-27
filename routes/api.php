@@ -43,5 +43,6 @@ Route::middleware('auth:sanctum')->group(function () {
      */
     Route::middleware('can:process sales')->group(function () {
         Route::post('/sales', [SaleController::class, 'store']);
+        Route::get('/sales', [SaleController::class, 'index']);
     });
 });

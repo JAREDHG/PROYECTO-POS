@@ -176,6 +176,47 @@
             }
         },
         "/sales": {
+            "get": {
+                "tags": [
+                    "Ventas"
+                ],
+                "summary": "Obtener historial de ventas",
+                "description": "Recupera todas las ventas registradas en el sistema, ordenadas de la más reciente a la más antigua, incluyendo el detalle de los productos vendidos.",
+                "operationId": "9a52aea5bea0f084e08a91260f5eb957",
+                "responses": {
+                    "200": {
+                        "description": "Historial de ventas recuperado con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Historial recuperado con éxito."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Ventas"
