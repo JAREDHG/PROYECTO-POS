@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Servidor de Base de Datos Relacional (RI02)
   db:
@@ -11,6 +9,12 @@ services:
       MYSQL_USER: pos_user
       MYSQL_PASSWORD: pos_password
       MYSQL_ROOT_PASSWORD: root_secure_password
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -32,8 +36,10 @@ services:
     container_name: pos_laravel_app
     restart: always
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     volumes:
       - ./:/var/www/html
     networks:

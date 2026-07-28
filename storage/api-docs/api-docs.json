@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "https://fictional-couscous-697rjg97wq4vcr579-80.app.github.dev/api",
+            "url": "http://my-default-host.com",
             "description": "Servidor API Principal"
         }
     ],

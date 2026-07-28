@@ -15,13 +15,16 @@ WORKDIR /var/www/html
 RUN apk add --no-cache \
     zip \
     unzip \
+    git \
+    curl \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
     bash \
     && docker-php-ext-install pdo pdo_mysql
 
-# Copiar artefactos limpios de desarrollo
+# Copiar Composer y artefactos de la app
+COPY --from=builder /usr/bin/composer /usr/bin/composer
 COPY --from=builder /app /var/www/html
 
 # RNF03: Configurar usuario sin privilegios root (www-data / uid 1000)

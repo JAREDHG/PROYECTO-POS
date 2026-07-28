@@ -2,25 +2,75 @@
 
 @section('content')
 <div x-data="{
+    // === ESTADO DE AUTENTICACIÓN ===
+    token: localStorage.getItem('auth_token') || null,
+    loginEmail: '',
+    loginPassword: '',
+    loginError: null,
+    loginLoading: false,
+
+    async login() {
+        this.loginLoading = true;
+        this.loginError = null;
+
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json' 
+                },
+                body: JSON.stringify({ 
+                    email: this.loginEmail, 
+                    password: this.loginPassword 
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Credenciales incorrectas');
+            }
+
+            // Guardar token y limpiar formulario
+            this.token = data.access_token;
+            localStorage.setItem('auth_token', data.access_token);
+            this.loginPassword = '';
+
+            // Cargar productos ahora que tenemos permiso
+            this.cargarProductos();
+
+        } catch (error) {
+            this.loginError = error.message;
+        } finally {
+            this.loginLoading = false;
+        }
+    },
+
+    logout() {
+        this.token = null;
+        localStorage.removeItem('auth_token');
+        this.productos = [];
+        this.clearCart();
+    },
+    // ===============================
+
     openCobrar: false,
     openTicket: false,
     metodo: 'efectivo',
     recibido: 0,
     
     // Datos del cajero activo
-    cajero: 'María García',
+    cajero: 'Cajero en Turno',
 
     // Catálogo de productos
-    productos: [
-        { id: 1, sku: 'LAC001', nombre: 'Leche Lala 1L', categoria: 'Lácteos', categoriaIcono: '🥛', precio: 24.00, stock: 47 },
-        { id: 2, sku: 'PAN001', nombre: 'Pan Bimbo Grande', categoria: 'Panadería', categoriaIcono: '🍞', precio: 55.00, stock: 12 },
-        { id: 3, sku: 'BEB001', nombre: 'Jugo Del Valle 1L', categoria: 'Bebidas', categoriaIcono: '🥤', precio: 26.00, stock: 20 },
-        { id: 4, sku: 'BOT001', nombre: 'Sabritas Clásicas 45g', categoria: 'Botanas', categoriaIcono: '🍿', precio: 15.00, stock: 35 },
-        { id: 5, sku: 'LIM001', nombre: 'Papel Higiénico 4r', categoria: 'Limpieza', categoriaIcono: '🧻', precio: 42.00, stock: 30 },
-        { id: 6, sku: 'BEB002', nombre: 'Coca-Cola 600ml', categoria: 'Bebidas', categoriaIcono: '🥤', precio: 18.00, stock: 50 },
-        { id: 7, sku: 'BAS001', nombre: 'Frijol Negro 1kg', categoria: 'Básicos', categoriaIcono: '🌾', precio: 38.00, stock: 20 },
-        { id: 8, sku: 'BEB003', nombre: 'Agua Bonafont 1.5L', categoria: 'Bebidas', categoriaIcono: '🥤', precio: 14.00, stock: 60 }
-    ],
+    productos: [],
+    cargandoProductos: false,
+    errorProductos: '',
+
+    // === NUEVAS VARIABLES PARA EL COBRO ===
+    procesandoVenta: false,
+    errorVenta: '',
 
     // Estado del Carrito
     cart: [],
@@ -37,6 +87,50 @@
         metodo: '',
         recibido: 0,
         cambio: 0
+    },
+
+    async cargarProductos() {
+        this.cargandoProductos = true;
+        this.errorProductos = '';
+
+        try {
+            const headers = { Accept: 'application/json' };
+            // Ahora siempre usaremos la variable reactiva this.token
+            if (this.token) {
+                headers.Authorization = `Bearer ${this.token}`;
+            } else {
+                throw new Error('No hay sesión activa.');
+            }
+
+            const response = await fetch('/api/products', { headers });
+
+            if (!response.ok) {
+                // Si el token expiró o es inválido, forzamos cerrar sesión
+                if (response.status === 401) {
+                    this.logout();
+                    throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
+                }
+                throw new Error('No se pudieron cargar los productos desde la API.');
+            }
+
+            const data = await response.json();
+
+            this.productos = data.map(producto => ({
+                ...producto,
+                id: producto.id,
+                sku: producto.sku,
+                nombre: producto.name,
+                categoria: 'General',
+                categoriaIcono: '📦',
+                precio: Number(producto.sale_price),
+                stock: Number(producto.stock)
+            }));
+        } catch (error) {
+            this.errorProductos = error.message;
+            console.error('Error al cargar productos:', error);
+        } finally {
+            this.cargandoProductos = false;
+        }
     },
 
     // Funciones del Carrito
@@ -90,53 +184,130 @@
         });
     },
 
-    // Procesar Venta y Generar Ticket
-    finalizarVenta() {
-        const ahora = new Date();
-        const folioRandom = 'TK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        
-        // Formatear Fecha (DD/MM/YY) y Hora
-        const dia = String(ahora.getDate()).padStart(2, '0');
-        const mes = String(ahora.getMonth() + 1).padStart(2, '0');
-        const anio = String(ahora.getFullYear()).slice(-2);
-        const fechaFormateada = `${dia}/${mes}/${anio}`;
-        const horaFormateada = ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase();
+    // === FUNCIÓN DE VENTA REAL CONECTADA A LA API ===
+    async finalizarVenta() {
+        this.procesandoVenta = true;
+        this.errorVenta = '';
 
-        this.ticket = {
-            folio: folioRandom,
-            fecha: fechaFormateada,
-            hora: horaFormateada,
-            items: JSON.parse(JSON.stringify(this.cart)),
-            total: this.total,
-            metodo: this.metodo,
-            recibido: this.metodo === 'efectivo' ? this.recibido : this.total,
-            cambio: this.metodo === 'efectivo' ? Math.max(0, this.recibido - this.total) : 0
-        };
+        try {
+            // 1. Armamos el JSON exactamente como lo pide el backend
+            const payload = {
+                payment_method: this.metodo,
+                items: this.cart.map(item => ({
+                    product_id: item.id,
+                    quantity: item.cantidad
+                }))
+            };
 
-        this.openCobrar = false;
-        this.openTicket = true;
+            // 2. Hacemos la petición POST a la API
+            const response = await fetch('/api/sales', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || data.message || 'Ocurrió un error al registrar la venta.');
+            }
+
+            // 3. ¡Venta Exitosa! Construimos el ticket usando los datos del backend
+            const ahora = new Date();
+            const horaFormateada = ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase();
+
+            this.ticket = {
+                folio: data.ticket.folio, 
+                fecha: data.ticket.fecha.split(' ')[0], 
+                hora: horaFormateada,
+                items: JSON.parse(JSON.stringify(this.cart)), 
+                total: data.ticket.total, 
+                metodo: data.ticket.metodo_pago,
+                recibido: this.metodo === 'efectivo' ? this.recibido : data.ticket.total,
+                cambio: this.metodo === 'efectivo' ? Math.max(0, this.recibido - data.ticket.total) : 0
+            };
+
+            // 4. Cambiamos las pantallas
+            this.openCobrar = false;
+            this.openTicket = true;
+            
+            // 5. Recargamos los productos para que el Frontend actualice el Stock
+            this.cargarProductos();
+
+        } catch (error) {
+            this.errorVenta = error.message;
+            alert('Atención: ' + error.message);
+        } finally {
+            this.procesandoVenta = false;
+        }
     },
 
-    // Reiniciar para una Nueva Venta
     nuevaVenta() {
         this.clearCart();
         this.openTicket = false;
         this.recibido = 0;
         this.metodo = 'efectivo';
     }
-}" class="h-full flex flex-col">
+}" x-init="if(token) cargarProductos()" class="h-full flex flex-col relative">
 
+    <!-- MODAL DE LOGIN BLOQUEADOR -->
+    <div x-show="!token" 
+         class="fixed inset-0 z-[100] flex items-center justify-center bg-[#111827] bg-opacity-95 backdrop-blur-md"
+         style="display: none;">
+        <div class="bg-[#1f2937] p-8 rounded-2xl shadow-2xl border border-gray-700 w-96 max-w-full">
+            <div class="text-center mb-6">
+                <span class="text-4xl block mb-2">🏪</span>
+                <h2 class="text-2xl font-black tracking-tight text-white">Acceso al POS</h2>
+                <p class="text-sm text-gray-400 mt-1">Inicia sesión para abrir caja</p>
+            </div>
+
+            <!-- Mensaje de error dinámico -->
+            <div x-show="loginError" x-text="loginError" style="display: none;" 
+                 class="mb-6 text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-xl text-sm text-center font-semibold">
+            </div>
+
+            <form @submit.prevent="login()">
+                <div class="mb-4 relative">
+                    <label class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wider">Correo</label>
+                    <input x-model="loginEmail" type="email" required placeholder="admin@ejemplo.com" 
+                           class="w-full bg-[#111827] text-white placeholder-gray-600 rounded-xl px-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition">
+                </div>
+                <div class="mb-6 relative">
+                    <label class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wider">Contraseña</label>
+                    <input x-model="loginPassword" type="password" required placeholder="••••••••" 
+                           class="w-full bg-[#111827] text-white placeholder-gray-600 rounded-xl px-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition">
+                </div>
+                <button type="submit" :disabled="loginLoading" 
+                        class="w-full bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-black py-3.5 px-4 rounded-xl text-sm tracking-wide uppercase transition shadow-lg shadow-emerald-500/10 disabled:opacity-50 flex items-center justify-center gap-2">
+                    <span x-show="!loginLoading">🔐 Iniciar Sesión</span>
+                    <span x-show="loginLoading" style="display: none;">Conectando...</span>
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- FIN MODAL LOGIN -->
+
+    <!-- CONTENIDO PRINCIPAL DEL POS -->
     <div class="flex h-full gap-6">
         <div class="flex-1 flex flex-col h-full overflow-hidden">
             
-            <div class="mb-6">
-                <div class="relative">
+            <div class="mb-6 flex gap-4">
+                <div class="relative flex-1">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">🔍</span>
                     <input type="text" 
                            x-model="busqueda"
-                           placeholder="Buscar producto por nombre, SKU o código de barras..." 
+                           placeholder="Buscar producto por nombre o SKU..." 
                            class="w-full bg-[#1f2937] text-white placeholder-gray-500 text-sm rounded-xl pl-11 pr-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition" />
                 </div>
+                <!-- Botón de Cerrar Sesión (Opcional, muy útil para pruebas) -->
+                <button @click="logout()" title="Cerrar Sesión"
+                        class="bg-[#1f2937] border border-gray-700 hover:border-red-500 text-gray-400 hover:text-red-400 px-4 py-3 rounded-xl transition">
+                    🚪
+                </button>
             </div>
 
             <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-thin">
@@ -166,6 +337,25 @@
             </div>
 
             <div class="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pr-1">
+                <template x-if="cargandoProductos">
+                    <div class="col-span-full flex items-center justify-center py-12 text-sm text-gray-400">
+                        Cargando catálogo de productos...
+                    </div>
+                </template>
+
+                <template x-if="!cargandoProductos && errorProductos">
+                    <div class="col-span-full rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+                        <p class="font-semibold">No fue posible cargar el catálogo.</p>
+                        <p class="mt-1" x-text="errorProductos"></p>
+                    </div>
+                </template>
+
+                <template x-if="!cargandoProductos && !errorProductos && productosFiltrados.length === 0">
+                    <div class="col-span-full flex items-center justify-center py-12 text-sm text-gray-400">
+                        No hay productos para mostrar con los filtros actuales.
+                    </div>
+                </template>
+
                 <template x-for="producto in productosFiltrados" :key="producto.id">
                     <div @click="addToCart(producto)" 
                          class="bg-[#1f2937] border border-gray-700/60 rounded-2xl p-4 flex flex-col justify-between relative hover:border-emerald-500/50 cursor-pointer transition select-none group">
@@ -180,7 +370,7 @@
                                 x-text="producto.nombre"></h3>
                         </div>
 
-                        <div class="text-lg font-bold text-white font-mono" x-text="'$' + producto.precio.toFixed(2)"></div>
+                        <div class="text-lg font-bold text-white font-mono" x-text="'$' + Number(producto.precio).toFixed(2)"></div>
                     </div>
                 </template>
             </div>
@@ -240,6 +430,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE COBRO Y TICKET -->
     <div x-show="openCobrar" 
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0"
@@ -251,12 +442,10 @@
          style="display: none;">
         
         <div @click.away="openCobrar = false" class="bg-[#1f2937] border border-gray-700 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl">
-            
             <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-[#1a222f]">
                 <h3 class="font-bold text-white text-base tracking-wide">Cobrar Venta</h3>
                 <button @click="openCobrar = false" class="text-gray-400 hover:text-white transition">✕</button>
             </div>
-
             <div class="p-6 space-y-5">
                 <div class="bg-[#111827]/60 rounded-xl p-4 border border-gray-800 text-xs space-y-1.5 text-gray-400 max-h-28 overflow-y-auto font-mono">
                     <template x-for="item in cart" :key="item.id">
@@ -266,12 +455,10 @@
                         </div>
                     </template>
                 </div>
-
                 <div class="flex justify-between items-center border-b border-gray-700/60 pb-3">
                     <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">TOTAL A PAGAR</span>
                     <span class="text-3xl font-black text-emerald-400 font-mono" x-text="'$' + total.toFixed(2)"></span>
                 </div>
-
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-gray-400 tracking-wider uppercase">Método de Pago</label>
                     <div class="grid grid-cols-3 gap-3">
@@ -286,7 +473,6 @@
                         </button>
                     </div>
                 </div>
-
                 <div x-show="metodo === 'efectivo'" class="space-y-3" x-transition>
                     <div class="flex justify-between items-center">
                         <label class="text-xs font-bold text-gray-400 tracking-wider uppercase">Efectivo Recibido</label>
@@ -300,25 +486,23 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-lg font-bold text-gray-500 font-mono">$</span>
                         <input type="number" x-model.number="recibido" class="w-full bg-[#111827] text-white font-mono font-bold text-xl rounded-xl pl-10 pr-4 py-3 border border-gray-800 focus:outline-none focus:border-emerald-500 text-right" />
                     </div>
-
                     <div class="bg-[#1a222f] rounded-xl p-4 flex justify-between items-center border border-gray-800">
                         <span class="text-xs font-bold text-gray-400">CAMBIO:</span>
                         <span class="text-xl font-bold font-mono text-emerald-400" x-text="'$' + (recibido - total >= 0 ? (recibido - total).toFixed(2) : '0.00')"></span>
                     </div>
                 </div>
             </div>
-
             <div class="p-4 bg-[#1a222f] border-t border-gray-700">
+                <!-- === BOTÓN DE COBRO ACTUALIZADO === -->
                 <button @click="finalizarVenta()" 
-                        :disabled="metodo === 'efectivo' && recibido < total"
+                        :disabled="(metodo === 'efectivo' && recibido < total) || procesandoVenta"
                         class="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-gray-950 font-black py-4 px-4 rounded-xl text-sm tracking-wide uppercase transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2">
-                    ✅ Finalizar Venta
+                    <span x-show="!procesandoVenta">✅ Finalizar Venta</span>
+                    <span x-show="procesandoVenta" style="display: none;">⏳ Procesando cobro...</span>
                 </button>
             </div>
-
         </div>
     </div>
-
 
     <div x-show="openTicket" 
          x-transition:enter="transition ease-out duration-300"
@@ -331,14 +515,11 @@
          style="display: none;">
         
         <div class="bg-white text-gray-900 rounded-3xl p-6 sm:p-7 w-full max-w-sm shadow-2xl font-mono relative border border-gray-200 space-y-4">
-            
             <div class="text-center space-y-1">
                 <h2 class="text-lg font-black tracking-tight text-black">Abarrotes El Surtidor</h2>
                 <p class="text-[11px] text-gray-500 leading-tight">Av. Hidalgo 45, Col. Centro<br>Tel. (55) 2345-6789</p>
             </div>
-
             <div class="border-b border-dashed border-gray-300 my-2"></div>
-
             <div class="text-[11px] text-gray-600 space-y-1">
                 <div class="flex justify-between font-bold text-black">
                     <span>FOLIO:</span>
@@ -353,16 +534,13 @@
                     <span x-text="cajero"></span>
                 </div>
             </div>
-
             <div class="border-b border-dashed border-gray-300 my-2"></div>
-
             <div>
                 <div class="grid grid-cols-12 text-[10px] font-bold text-gray-400 uppercase mb-2">
                     <span class="col-span-7">PRODUCTO</span>
                     <span class="col-span-2 text-center">QTY</span>
                     <span class="col-span-3 text-right">TOTAL</span>
                 </div>
-
                 <div class="space-y-1.5 text-xs text-black font-semibold">
                     <template x-for="item in ticket.items" :key="item.id">
                         <div class="grid grid-cols-12 items-center">
@@ -373,15 +551,12 @@
                     </template>
                 </div>
             </div>
-
             <div class="border-b border-dashed border-gray-300 my-2"></div>
-
             <div class="space-y-1.5 text-xs">
                 <div class="flex justify-between items-center font-black text-base text-black">
                     <span>TOTAL</span>
                     <span class="text-xl" x-text="'$' + ticket.total.toFixed(2)"></span>
                 </div>
-
                 <div class="flex justify-between text-gray-600 text-[11px] pt-1">
                     <span>MÉTODO:</span>
                     <span class="font-bold text-black flex items-center gap-1">
@@ -390,7 +565,6 @@
                         <span x-show="ticket.metodo === 'transferencia'">🏦 Transferencia</span>
                     </span>
                 </div>
-
                 <template x-if="ticket.metodo === 'efectivo'">
                     <div class="space-y-1 text-[11px] text-gray-600">
                         <div class="flex justify-between">
@@ -404,25 +578,19 @@
                     </div>
                 </template>
             </div>
-
             <div class="border-b border-dashed border-gray-300 my-2"></div>
-
             <div class="text-center text-xs font-bold text-gray-700 pt-1">
                 <p>¡Gracias por su compra!</p>
                 <p class="text-[11px] font-normal text-gray-500 mt-0.5">Vuelva pronto 😊</p>
             </div>
-
         </div>
-
         <div class="w-full max-w-sm mt-4">
             <button @click="nuevaVenta()" 
                     class="w-full bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-extrabold py-3.5 px-4 rounded-xl text-sm transition tracking-wide flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20">
                 🛒 Nueva Venta
             </button>
         </div>
-
     </div>
-
 </div>
 
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

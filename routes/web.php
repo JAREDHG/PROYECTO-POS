@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 // 1. Ruta de bienvenida por defecto de Laravel
 Route::get('/', function () {
-    return view('welcome');
+    return view('pos');
 });
 
 // 2. Interfaz del Punto de Venta (Carrito, Cobro y Modal de Pago)
