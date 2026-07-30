@@ -26,23 +26,23 @@
             <!-- Enlaces de Navegación Inteligentes -->
             <nav class="p-4 space-y-2">
                 <!-- Dashboard -->
-                <a href="/dashboard" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('dashboard') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ url('dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('dashboard') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
                     <span>📊</span> Dashboard
                 </a>
                 
                 <!-- Punto de Venta -->
-                <a href="/pos" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('pos') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ url('/') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('/') || Request::is('pos') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
                     <span>💻</span> Punto de Venta
                 </a>
                 
                 <!-- Inventario -->
-                <a href="/inventario" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('inventario') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ url('inventario') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('inventario') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
                     <span>📦</span> Inventario
                 </a>
                 
                 <!-- Reportes -->
-                <a href="/reportes" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('reportes') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
-                    <span>📊</span> Reportes
+                <a href="{{ url('reportes') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('reportes') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                    <span>📈</span> Reportes
                 </a>
             </nav>
         </div>
@@ -65,7 +65,7 @@
         <header class="h-16 bg-[#1f2937] border-b border-gray-700 px-8 flex items-center justify-between">
             <h2 class="text-xl font-bold text-white">
                 {{ Request::is('dashboard') ? 'Dashboard de Estadísticas' : '' }}
-                {{ Request::is('pos') ? 'Punto de Venta' : '' }}
+                {{ Request::is('/') || Request::is('pos') ? 'Punto de Venta' : '' }}
                 {{ Request::is('inventario') ? 'Gestión de Inventario' : '' }}
                 {{ Request::is('reportes') ? 'Corte de Caja y Reportes' : '' }}
             </h2>
