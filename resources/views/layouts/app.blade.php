@@ -44,6 +44,11 @@
                 <a href="{{ url('reportes') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('reportes') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
                     <span>📈</span> Reportes
                 </a>
+
+                <!-- Historial de Ventas -->
+                <a href="{{ url('ventas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('ventas') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                    <span>🧾</span> Historial de Ventas
+                </a>
             </nav>
         </div>
 
@@ -67,6 +72,7 @@
                 {{ Request::is('dashboard') ? 'Dashboard de Estadísticas' : '' }}
                 {{ Request::is('/') || Request::is('pos') ? 'Punto de Venta' : '' }}
                 {{ Request::is('inventario') ? 'Gestión de Inventario' : '' }}
+                {{ Request::is('ventas') ? 'Historial de Ventas' : '' }}
                 {{ Request::is('reportes') ? 'Corte de Caja y Reportes' : '' }}
             </h2>
 

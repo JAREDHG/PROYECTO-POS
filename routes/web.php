@@ -32,3 +32,8 @@ Route::get('/dashboard', function () {
 Route::get('/reportes', function () {
     return view('reportes');
 })->name('reportes');
+
+// 6. Historial de Ventas y Auditoría de Tickets
+Route::get('/ventas', function () {
+    return view('ventas');
+})->name('ventas');

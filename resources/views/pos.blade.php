@@ -516,8 +516,8 @@
         
         <div class="bg-white text-gray-900 rounded-3xl p-6 sm:p-7 w-full max-w-sm shadow-2xl font-mono relative border border-gray-200 space-y-4">
             <div class="text-center space-y-1">
-                <h2 class="text-lg font-black tracking-tight text-black">Abarrotes El Surtidor</h2>
-                <p class="text-[11px] text-gray-500 leading-tight">Av. Hidalgo 45, Col. Centro<br>Tel. (55) 2345-6789</p>
+                <h2 class="text-lg font-black tracking-tight text-black">Abarrotes</h2>
+                <p class="text-[11px] text-gray-500 leading-tight">Dirección<br>Tel. (55) xxxxxxxx</p>
             </div>
             <div class="border-b border-dashed border-gray-300 my-2"></div>
             <div class="text-[11px] text-gray-600 space-y-1">
