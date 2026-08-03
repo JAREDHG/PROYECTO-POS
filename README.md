@@ -1,8 +1,24 @@
-# Sistema POS
+# Sistema POS (Punto de Venta)
 
 ## Estado del proyecto
 
-Sistema POS con el backend ya desarrollado y documentado. Hasta este momento se han completado los controladores de ventas e inventario, la base de datos, los seeders y la API documentada con Swagger. El frontend de la interfaz del punto de venta con Alpine.js sigue en desarrollo e integración.
+Sistema POS integral con el backend desarrollado, documentado y un frontend interactivo construido con **Tailwind CSS** y **Alpine.js**. 
+
+### ✅ Módulos y Funcionalidades Completadas:
+* [x] **Dashboard:** Métricas y datos reales conectados directamente con la API.
+* [x] **Punto de Venta (POS):** Catálogo interactivo de productos con categorías funcionales y carrito de compras reactivo.
+* [x] **Control de Pagos (POS):** Bloqueo interactivo temporal de Tarjeta y Transferencia con aviso de mantenimiento y estilo visual en alerta.
+* [x] **Barra Lateral:** Navegación optimizada con cierre de sesión seguro y funcional.
+* [x] **Historial de Ventas:** Módulo de transacciones concluido e intacto.
+* [x] **Inventario (CRUD Completo):** Listado dinámico, buscador reactivo (por nombre, SKU o categoría), registro, edición y eliminación conectados en tiempo real con la base de datos vía API REST (`/api/products`).
+* [x] **Seguridad y Roles:** Protección de rutas de API mediante Laravel Sanctum y políticas de autorización (`can:manage products`, `can:process sales`).
+* [x] **Documentación:** Endpoints documentados con Swagger / OpenAPI.
+
+### 📋 Pendientes por Desarrollar:
+* [ ] **Reportes:** Revisión de módulos analíticos, buscador dinámico y función de exportación/descarga.
+* [ ] **Usuarios / Roles:** Vinculación visual del usuario autenticado, bloqueo de vistas de administrador para cajeros, y módulo de registro/modificación de personal.
+* [ ] **Módulo de Cajero:** Pruebas integrales de flujo transaccional y restricciones de caja.
+* [ ] **Base de Datos:** Ajuste de políticas de integridad referencial (borrado en cascada o baja lógica) para evitar bloqueos por llaves foráneas al eliminar productos con historial de ventas.
 
 ## Arquitectura
 
@@ -83,7 +99,7 @@ El proyecto usa un archivo `.env` con la siguiente configuración base para Dock
 ```env
 APP_NAME=Laravel
 APP_ENV=local
-APP_KEY=base64:vAAAmJN8ci4SXgpWSjUzjTDoyaUQT5f5u4CIfPq+GWA=
+APP_KEY=
 APP_DEBUG=true
 APP_URL=http://localhost
 
@@ -100,7 +116,7 @@ REDIS_PORT=6379
 
 ## Credenciales de prueba
 
-Los seeders crean usuarios base para pruebas:
+Los seeders crean usuarios base paraV pruebas:
 
 - Administrador: `admin@pos.com` / `password123`
 - Cajero: `cajero@pos.com` / `password123`
@@ -117,6 +133,5 @@ Si estás usando GitHub Codespaces, puedes abrir la URL pública que se genere p
 
 ## Notas adicionales
 
-- El backend ya está listo para operar con ventas, inventario y endpoints documentados.
-- El frontend del POS aún está pendiente de integración y no debe considerarse terminado.
+- El backend y el frontend administrativo de inventario y POS se encuentran integrados y funcionales.
 - Si el contenedor de la app presenta problemas de permisos, vuelve a ejecutar el comando de `chown` y `chmod`.

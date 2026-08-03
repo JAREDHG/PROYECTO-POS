@@ -47,11 +47,56 @@ class ProductController extends Controller
         $data = $request->validate([
             'sku'            => 'required|string|unique:products,sku',
             'name'           => 'required|string',
+            'category'       => 'nullable|string',
             'purchase_price' => 'required|numeric|min:0',
             'sale_price'     => 'required|numeric|min:0',
             'stock'          => 'required|integer|min:0',
         ]);
         
         return response()->json(Product::create($data), 201);
+    }
+
+    #[OA\Put(
+        path: "/products/{id}",
+        summary: "Actualizar producto",
+        description: "Modifica los datos de un producto existente",
+        security: [["sanctum" => []]],
+        tags: ["Productos"]
+    )]
+    #[OA\Response(response: 200, description: "Producto actualizado correctamente")]
+    public function update(Request $request, Product $product)
+    {
+        $data = $request->validate([
+            'sku'            => 'required|string|unique:products,sku,' . $product->id,
+            'name'           => 'required|string',
+            'category'       => 'nullable|string',
+            'purchase_price' => 'required|numeric|min:0',
+            'sale_price'     => 'required|numeric|min:0',
+            'stock'          => 'required|integer|min:0',
+        ]);
+
+        $product->update($data);
+
+        return response()->json([
+            'message' => 'Producto actualizado exitosamente',
+            'product' => $product
+        ]);
+    }
+
+    #[OA\Delete(
+        path: "/products/{id}",
+        summary: "Eliminar producto",
+        description: "Elimina un producto del inventario",
+        security: [["sanctum" => []]],
+        tags: ["Productos"]
+    )]
+    #[OA\Response(response: 200, description: "Producto eliminado correctamente")]
+    public function destroy(Product $product)
+    {
+        $product->delete();
+
+        return response()->json([
+            'message' => 'Producto eliminado correctamente'
+        ]);
     }
 }

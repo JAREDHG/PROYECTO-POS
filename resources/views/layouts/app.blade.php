@@ -52,15 +52,32 @@
             </nav>
         </div>
 
-        <!-- Información del Usuario/Cajero abajo -->
-        <div class="p-4 border-t border-gray-700 bg-[#1a222f] flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-gray-900">
-                MG
+        <!-- Información del Usuario y Cierre de Sesión en la Barra Lateral -->
+        <div class="p-4 border-t border-gray-700 bg-[#1a222f] flex items-center justify-between" x-data="{
+            nombreUsuario: localStorage.getItem('user_name') || 'Cajero',
+            rolUsuario: localStorage.getItem('user_role') || 'Cajero - Turno A',
+            cerrarSesion() {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_name');
+                localStorage.removeItem('user_role');
+                window.location.href = '/';
+            }
+        }">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-gray-900 shrink-0" 
+                     x-text="nombreUsuario.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()">
+                </div>
+                <div class="truncate">
+                    <p class="text-sm font-semibold text-white leading-none truncate" x-text="nombreUsuario"></p>
+                    <span class="text-xs text-gray-400 truncate block mt-0.5" x-text="rolUsuario"></span>
+                </div>
             </div>
-            <div>
-                <p class="text-sm font-semibold text-white leading-none">María García</p>
-                <span class="text-xs text-gray-400">Cajero - Turno A</span>
-            </div>
+            <!-- Botón de Logout -->
+            <button @click="cerrarSesion()" 
+                    title="Cerrar Sesión"
+                    class="text-gray-400 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-xl transition shrink-0">
+                🚪
+            </button>
         </div>
     </aside>
 

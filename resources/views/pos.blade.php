@@ -114,17 +114,42 @@
             }
 
             const data = await response.json();
+            const productosCrudos = Array.isArray(data) ? data : (data.data || []);
 
-            this.productos = data.map(producto => ({
-                ...producto,
-                id: producto.id,
-                sku: producto.sku,
-                nombre: producto.name,
-                categoria: 'General',
-                categoriaIcono: '📦',
-                precio: Number(producto.sale_price),
-                stock: Number(producto.stock)
-            }));
+            // Aquí clasificamos automáticamente cada producto según su nombre
+            this.productos = productosCrudos.map(producto => {
+                let nombreLower = producto.name.toLowerCase();
+                let categoriaDetectada = 'General';
+                let iconoDetectado = '📦';
+
+                if (nombreLower.includes('leche') || nombreLower.includes('queso') || nombreLower.includes('yogurt') || nombreLower.includes('crema')) {
+                    categoriaDetectada = 'Lácteos';
+                    iconoDetectado = '🥛';
+                } else if (nombreLower.includes('pan') || nombreLower.includes('concha') || nombreLower.includes('bolillo') || nombreLower.includes('pastel')) {
+                    categoriaDetectada = 'Panadería';
+                    iconoDetectado = '🍞';
+                } else if (nombreLower.includes('coca') || nombreLower.includes('pepsi') || nombreLower.includes('agua') || nombreLower.includes('jugo') || nombreLower.includes('refresco')) {
+                    categoriaDetectada = 'Bebidas';
+                    iconoDetectado = '🥤';
+                } else if (nombreLower.includes('sabritas') || nombreLower.includes('ruffles') || nombreLower.includes('totis') || nombreLower.includes('galletas') || nombreLower.includes('papas')) {
+                    categoriaDetectada = 'Botanas';
+                    iconoDetectado = '🍿';
+                } else if (nombreLower.includes('jabon') || nombreLower.includes('cloro') || nombreLower.includes('detergente') || nombreLower.includes('papel')) {
+                    categoriaDetectada = 'Limpieza';
+                    iconoDetectado = '🧻';
+                }
+
+                return {
+                    ...producto,
+                    id: producto.id,
+                    sku: producto.sku,
+                    nombre: producto.name,
+                    categoria: categoriaDetectada,
+                    categoriaIcono: iconoDetectado,
+                    precio: Number(producto.sale_price),
+                    stock: Number(producto.stock)
+                };
+            });
         } catch (error) {
             this.errorProductos = error.message;
             console.error('Error al cargar productos:', error);
@@ -303,11 +328,6 @@
                            placeholder="Buscar producto por nombre o SKU..." 
                            class="w-full bg-[#1f2937] text-white placeholder-gray-500 text-sm rounded-xl pl-11 pr-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition" />
                 </div>
-                <!-- Botón de Cerrar Sesión (Opcional, muy útil para pruebas) -->
-                <button @click="logout()" title="Cerrar Sesión"
-                        class="bg-[#1f2937] border border-gray-700 hover:border-red-500 text-gray-400 hover:text-red-400 px-4 py-3 rounded-xl transition">
-                    🚪
-                </button>
             </div>
 
             <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-thin">
@@ -462,14 +482,25 @@
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-gray-400 tracking-wider uppercase">Método de Pago</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <button @click="metodo = 'efectivo'" :class="metodo === 'efectivo' ? 'bg-emerald-600 text-black border-emerald-500 font-bold' : 'bg-[#111827] text-gray-400 border-gray-800'" class="flex flex-col items-center justify-center py-3 rounded-xl border text-xs transition gap-1">
+                        <!-- Efectivo (Activo y funcional) -->
+                        <button @click="metodo = 'efectivo'" 
+                                :class="metodo === 'efectivo' ? 'bg-emerald-600 text-black border-emerald-500 font-bold' : 'bg-[#111827] text-gray-400 border-gray-800'" 
+                                class="flex flex-col items-center justify-center py-3 rounded-xl border text-xs transition gap-1">
                             <span>💵</span> Efectivo
                         </button>
-                        <button @click="metodo = 'tarjeta'" :class="metodo === 'tarjeta' ? 'bg-emerald-600 text-black border-emerald-500 font-bold' : 'bg-[#111827] text-gray-400 border-gray-800'" class="flex flex-col items-center justify-center py-3 rounded-xl border text-xs transition gap-1">
+
+                        <!-- Tarjeta (Amarillo, interactivo con alerta de mantenimiento) -->
+                        <button @click="alert('⚠️ La opción de Tarjeta se encuentra actualmente en mantenimiento.')" 
+                                class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
                             <span>💳</span> Tarjeta
+                            <span class="text-[9px] uppercase tracking-tighter opacity-80">Mantenimiento</span>
                         </button>
-                        <button @click="metodo = 'transferencia'" :class="metodo === 'transferencia' ? 'bg-emerald-600 text-black border-emerald-500 font-bold' : 'bg-[#111827] text-gray-400 border-gray-800'" class="flex flex-col items-center justify-center py-3 rounded-xl border text-xs transition gap-1">
+
+                        <!-- Transferencia (Amarillo, interactivo con alerta de mantenimiento) -->
+                        <button @click="alert('⚠️ La opción de Transferencia se encuentra actualmente en mantenimiento.')" 
+                                class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
                             <span>🏦</span> Transferencia
+                            <span class="text-[9px] uppercase tracking-tighter opacity-80">Mantenimiento</span>
                         </button>
                     </div>
                 </div>

@@ -175,6 +175,44 @@
                 ]
             }
         },
+        "/products/{id}": {
+            "put": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Actualizar producto",
+                "description": "Modifica los datos de un producto existente",
+                "operationId": "1419d479f9340e30e67fe21a2ca525b7",
+                "responses": {
+                    "200": {
+                        "description": "Producto actualizado correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Eliminar producto",
+                "description": "Elimina un producto del inventario",
+                "operationId": "fe34b364a3f192305598b65d04d06b5d",
+                "responses": {
+                    "200": {
+                        "description": "Producto eliminado correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/sales": {
             "get": {
                 "tags": [
