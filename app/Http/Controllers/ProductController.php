@@ -10,15 +10,15 @@ class ProductController extends Controller
 {
     #[OA\Get(
         path: "/products",
-        summary: "Obtener inventario",
-        description: "Devuelve la lista completa de productos disponibles",
+        summary: "Obtener inventario activo",
+        description: "Devuelve la lista completa de productos activosdisponibles",
         security: [["sanctum" => []]],
         tags: ["Productos"]
     )]
     #[OA\Response(response: 200, description: "Lista de productos obtenida correctamente")]
     public function index()
     {
-        return response()->json(Product::all());
+        return response()->json(Product::where('is_active', true)->get());
     }
 
     #[OA\Post(
@@ -85,18 +85,49 @@ class ProductController extends Controller
 
     #[OA\Delete(
         path: "/products/{id}",
-        summary: "Eliminar producto",
-        description: "Elimina un producto del inventario",
+        summary: "Desactivar producto",
+        description: "Realiza una baja lógica del producto en el inventario",
         security: [["sanctum" => []]],
         tags: ["Productos"]
     )]
-    #[OA\Response(response: 200, description: "Producto eliminado correctamente")]
+    #[OA\Response(response: 200, description: "Producto desactivado correctamente")]
     public function destroy(Product $product)
     {
-        $product->delete();
+        $product->update(['is_active' => false]);
+        $product->save();
 
         return response()->json([
-            'message' => 'Producto eliminado correctamente'
-        ]);
+            'message' => 'Producto desactivado correctamente',
+            'product' => $product
+        ], 200);
+    }
+
+    #[OA\Get(
+        path: "/products/inactive",
+        summary: "Obtener productos inactivos",
+        description: "Devuelve los productos dados de baja lógicamente",
+        security: [["sanctum" => []]],
+        tags: ["Productos"]
+    )]
+    public function inactive()
+    {
+        return response()->json(Product::where('is_active', false)->get());
+    }
+
+    #[OA\Put(
+        path: "/products/{id}/restore",
+        summary: "Reactivar producto",
+        description: "Restaura un producto dado de baja lógica al inventario activo",
+        security: [["sanctum" => []]],
+        tags: ["Productos"]
+    )]
+    public function restore(Product $product)
+    {
+        $product->update(['is_active' => true]);
+
+        return response()->json([
+            'message' => 'Producto reactivado correctamente',
+            'product' => $product
+        ], 200);
     }
 }

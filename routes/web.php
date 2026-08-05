@@ -37,3 +37,8 @@ Route::get('/reportes', function () {
 Route::get('/ventas', function () {
     return view('ventas');
 })->name('ventas');
+
+// 7. Histórico de Productos Inactivos (Papelera)
+Route::get('/productos-inactivos', function () {
+    return view('productos-inactivos');
+})->name('productos-inactivos');

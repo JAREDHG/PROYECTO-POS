@@ -33,9 +33,22 @@ Route::middleware('auth:sanctum')->group(function () {
      * Capa de seguridad: Solo usuarios con permiso 'manage products' (Admin)
      */
     Route::middleware('can:manage products')->group(function () {
+        // 1. Consulta de Inventario Activo
         Route::get('/products', [ProductController::class, 'index']);
+        
+        // 2. Consulta de Papelera (Ruta estática: va ANTES de {product})
+        Route::get('/products/inactive', [ProductController::class, 'inactive']);
+        
+        // 3. Crear Producto
         Route::post('/products', [ProductController::class, 'store']);
+        
+        // 4. Reactivar Producto en Papelera
+        Route::put('/products/{product}/restore', [ProductController::class, 'restore']);
+        
+        // 5. Actualizar Producto Activo
         Route::put('/products/{product}', [ProductController::class, 'update']);
+        
+        // 6. Baja Lógica de Producto
         Route::delete('/products/{product}', [ProductController::class, 'destroy']);
     });
 

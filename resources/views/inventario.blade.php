@@ -54,7 +54,8 @@
                 icono: this.obtenerIcono(p.category || 'General'),
                 compra: Number(p.purchase_price || 0),
                 venta: Number(p.sale_price || 0),
-                stock: Number(p.stock || 0)
+                stock: Number(p.stock || 0),
+                is_active: p.is_active !== undefined ? p.is_active : true
             }));
         } catch (e) {
             this.errorMsg = e.message;
@@ -120,19 +121,27 @@
         this.openEliminar = true;
     },
     async confirmarEliminar() {
+        const idEliminar = this.form.id; // Guardamos el ID antes de limpiar
+        
+        // 1. Quitamos el producto de la vista LOCAL de inmediato (Efecto instantáneo)
+        this.productos = this.productos.filter(p => p.id !== idEliminar);
+        this.openEliminar = false; // Cerramos el modal de inmediato
+
         try {
-            const res = await fetch(`/api/products/${this.form.id}`, {
+            // 2. Mandamos la petición al servidor en segundo plano
+            const res = await fetch(`/api/products/${idEliminar}`, {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
                     'Authorization': `Bearer ${this.token}`
                 }
             });
-            if (!res.ok) throw new Error('No se pudo eliminar el producto.');
-            this.openEliminar = false;
-            await this.cargarInventario();
+            
+            if (!res.ok) {
+                console.error('El servidor no pudo procesar la baja lógica, pero se removió de la vista.');
+            }
         } catch (e) {
-            alert('Error: ' + e.message);
+            console.error('Error de red: ', e.message);
         }
     },
 
@@ -189,10 +198,19 @@
             <p class="text-xs text-gray-400 mt-0.5">RF01 · Gestión centralizada de productos (Conectado a BD)</p>
         </div>
 
-        <button @click="resetForm(); openAgregar = true" 
-                class="bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-500/15">
-            <span class="text-base font-black">+</span> Agregar Producto
-        </button>
+        <div class="flex items-center gap-3">
+            <!-- BOTÓN PAPELERA DE PRODUCTOS INACTIVOS -->
+            <a href="/productos-inactivos" 
+               class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-gray-700/80 transition">
+                🗑️ Ver Papelera
+            </a>
+
+            <!-- BOTÓN AGREGAR PRODUCTO -->
+            <button @click="resetForm(); openAgregar = true" 
+                    class="bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-500/15">
+                <span class="text-base font-black">+</span> Agregar Producto
+            </button>
+        </div>
     </div>
 
     <!-- MENSAJE DE CARGA O ERROR -->
@@ -400,14 +418,14 @@
     </div>
 
 
-    <!-- MODAL: ELIMINAR PRODUCTO -->
+    <!-- MODAL: DESACTIVAR / ELIMINAR PRODUCTO -->
     <div x-show="openEliminar" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4" style="display: none;">
         <div @click.away="openEliminar = false" class="bg-[#1b2431] border border-gray-700 w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl p-5 text-center space-y-4">
             <div class="w-12 h-12 bg-red-500/10 text-red-400 rounded-full flex items-center justify-center mx-auto text-xl">⚠️</div>
             <div>
-                <h3 class="font-bold text-white text-base">¿Eliminar Producto?</h3>
+                <h3 class="font-bold text-white text-base">¿Desactivar Producto?</h3>
                 <p class="text-xs text-gray-400 mt-1">
-                    ¿Estás seguro de que deseas eliminar <span class="text-white font-bold" x-text="form.name"></span> de la base de datos?
+                    ¿Estás seguro de que deseas desactivar <span class="text-white font-bold" x-text="form.name"></span> de la base de datos?
                 </p>
             </div>
             <div class="flex gap-2 justify-center pt-2">

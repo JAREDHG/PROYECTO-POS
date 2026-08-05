@@ -15,9 +15,12 @@ class Product extends Model
      */
     protected $fillable = [
         'sku', 
+        'barcode',
         'name', 
+        'category',
         'purchase_price', 
         'sale_price', 
-        'stock'
+        'stock',
+        'is_active',
     ];
 }
