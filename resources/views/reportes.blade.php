@@ -1,11 +1,45 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- ESTILOS EXCLUSIVOS PARA IMPRESIÓN (PDF / CORTE) -->
+<style>
+    @media print {
+        /* Ocultar elementos de la interfaz general (Sidebar, Header, Botones) */
+        aside, header, .no-print {
+            display: none !important;
+        }
+
+        body {
+            background-color: #ffffff !important;
+            color: #111827 !important;
+            font-family: system-ui, -apple-system, sans-serif !important;
+        }
+
+        .main-content, main, div {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* Mostrar la plantilla de impresión */
+        #plantilla-impresion {
+            display: block !important;
+        }
+    }
+
+    /* Ocultar la plantilla de impresión en la vista normal de la web */
+    #plantilla-impresion {
+        display: none;
+    }
+</style>
+
 <!-- CONTENEDOR PRINCIPAL CORTE DE CAJA / REPORTES -->
 <div x-data="reportesComponent()" x-init="cargarVentas()" class="space-y-6">
 
-    <!-- ENCABEZADO CORTE DE CAJA -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <!-- ENCABEZADO CORTE DE CAJA (WEB) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
         <div>
             <h1 class="text-2xl font-black text-white tracking-tight">Corte de Caja</h1>
             <p class="text-xs text-gray-400 mt-0.5">RF04 · Trazabilidad y auditoría del turno</p>
@@ -21,8 +55,8 @@
         </div>
     </div>
 
-    <!-- FILTROS Y BÚSQUEDA -->
-    <div class="flex flex-wrap items-center justify-between gap-3">
+    <!-- FILTROS Y BÚSQUEDA (WEB) -->
+    <div class="flex flex-wrap items-center justify-between gap-3 no-print">
         <div class="bg-[#18202c] p-1 rounded-xl border border-gray-800 flex items-center gap-1 overflow-x-auto">
             <template x-for="c in cajerosDisponibles" :key="c">
                 <button @click="cajeroFiltro = c" 
@@ -42,8 +76,8 @@
         </div>
     </div>
 
-    <!-- TARJETAS SUPERIORES DE MÉTRICAS GENERALES -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <!-- TARJETAS SUPERIORES DE MÉTRICAS GENERALES (WEB) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 no-print">
         <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl p-5 relative overflow-hidden shadow-xl">
             <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-gray-300 flex items-center justify-center text-sm mb-4">📋</div>
             <div class="text-3xl font-black text-white font-mono" x-text="totalOperaciones"></div>
@@ -66,8 +100,8 @@
         </div>
     </div>
 
-    <!-- DESGLOSE POR MÉTODO DE PAGO -->
-    <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl p-6 space-y-4 shadow-xl">
+    <!-- DESGLOSE POR MÉTODO DE PAGO (WEB) -->
+    <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl p-6 space-y-4 shadow-xl no-print">
         <h3 class="text-sm font-bold text-white">Desglose por Método de Pago</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -100,8 +134,8 @@
         </div>
     </div>
 
-    <!-- REGISTRO DE VENTAS DEL TURNO -->
-    <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl overflow-hidden shadow-2xl">
+    <!-- REGISTRO DE VENTAS DEL TURNO (WEB) -->
+    <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl overflow-hidden shadow-2xl no-print">
         <div class="p-5 border-b border-gray-800 flex justify-between items-center bg-[#101721]">
             <h3 class="text-sm font-bold text-white">Registro de Ventas del Turno</h3>
             <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold px-3 py-1 rounded-lg font-mono"
@@ -166,9 +200,110 @@
             </div>
         </div>
     </div>
+
+    <!-- ================================================================= -->
+    <!-- 📄 PLANTILLA INSTITUCIONAL EXCLUSIVA PARA IMPRESIÓN Y PDF -->
+    <!-- ================================================================= -->
+    <div id="plantilla-impresion" class="p-6 text-black space-y-6">
+        
+        <!-- ENCABEZADO INSTITUCIONAL DE LA UPT -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #059669; padding-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <!-- Logo UPT -->
+                <img src="{{ asset('imagenes/logo_uptex.png') }}" alt="Logo UPT" style="height: 55px; width: auto;">
+                <div>
+                    <h2 style="font-size: 16px; font-weight: 800; color: #111827; margin: 0; text-transform: uppercase;">Universidad Politécnica de Texcoco</h2>
+                    <p style="font-size: 11px; color: #4b5563; margin: 2px 0 0 0;">Sistema POS - Reporte Oficial de Corte de Caja</p>
+                </div>
+            </div>
+            <div style="text-align: right; font-size: 11px; color: #374151;">
+                <p style="margin: 0;"><strong>Fecha de Generación:</strong> <span x-text="new Date().toLocaleDateString('es-MX')"></span></p>
+                <p style="margin: 2px 0 0 0;"><strong>Hora:</strong> <span x-text="new Date().toLocaleTimeString('es-MX')"></span></p>
+                <p style="margin: 2px 0 0 0; color: #059669; font-weight: bold;">Filtro: <span x-text="cajeroFiltro"></span></p>
+            </div>
+        </div>
+
+        <!-- TARJETAS DE MÉTRICAS (IMPRESIÓN) -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px;">
+            <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; background-color: #f9fafb;">
+                <span style="font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase;">Total Operaciones</span>
+                <p style="font-size: 20px; font-weight: 800; color: #111827; margin: 4px 0 0 0;" x-text="totalOperaciones"></p>
+            </div>
+            <div style="border: 1px solid #10b981; border-radius: 8px; padding: 10px; background-color: #ecfdf5;">
+                <span style="font-size: 10px; font-weight: 700; color: #047857; text-transform: uppercase;">Ingresos Totales</span>
+                <p style="font-size: 20px; font-weight: 800; color: #047857; margin: 4px 0 0 0;" x-text="'$' + ingresosTotales.toFixed(2)"></p>
+            </div>
+            <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; background-color: #f9fafb;">
+                <span style="font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase;">Ticket Promedio</span>
+                <p style="font-size: 20px; font-weight: 800; color: #111827; margin: 4px 0 0 0;" x-text="'$' + ticketPromedio.toFixed(2)"></p>
+            </div>
+        </div>
+
+        <!-- DESGLOSE DE MÉTODOS DE PAGO (IMPRESIÓN) -->
+        <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; background-color: #ffffff; margin-top: 10px;">
+            <h4 style="font-size: 12px; font-weight: 700; color: #374151; margin: 0 0 8px 0; text-transform: uppercase;">Desglose por Método de Pago</h4>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 11px;">
+                <div>
+                    <span style="color: #6b7280;">💵 Efectivo:</span>
+                    <strong style="color: #111827;" x-text="'$' + totalEfectivo.toFixed(2) + ' (' + opsEfectivo + ' ops)'"></strong>
+                </div>
+                <div>
+                    <span style="color: #6b7280;">💳 Tarjeta:</span>
+                    <strong style="color: #111827;" x-text="'$' + totalTarjeta.toFixed(2) + ' (' + opsTarjeta + ' ops)'"></strong>
+                </div>
+                <div>
+                    <span style="color: #6b7280;">📲 Transferencia:</span>
+                    <strong style="color: #111827;" x-text="'$' + totalTransferencia.toFixed(2) + ' (' + opsTransferencia + ' ops)'"></strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA DE AUDITORÍA DE VENTAS (IMPRESIÓN) -->
+        <div style="margin-top: 15px;">
+            <h4 style="font-size: 12px; font-weight: 700; color: #111827; margin: 0 0 8px 0; text-transform: uppercase;">Detalle de Transacciones Registradas</h4>
+            <table style="width: 100%; border-collapse: collapse; font-size: 10px; text-align: left;">
+                <thead>
+                    <tr style="background-color: #f3f4f6; border-bottom: 1px solid #d1d5db; color: #374151; font-weight: 700;">
+                        <th style="padding: 6px;">FOLIO</th>
+                        <th style="padding: 6px;">PRODUCTOS</th>
+                        <th style="padding: 6px;">MÉTODO</th>
+                        <th style="padding: 6px;">CAJERO</th>
+                        <th style="padding: 6px;">HORA</th>
+                        <th style="padding: 6px; text-align: right;">TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="v in ventasFiltradas" :key="v.id || v.folio">
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 6px; font-weight: bold; color: #047857;" x-text="v.folio"></td>
+                            <td style="padding: 6px; color: #374151;" x-text="v.productos"></td>
+                            <td style="padding: 6px; color: #374151;" x-text="v.metodo"></td>
+                            <td style="padding: 6px; color: #374151;" x-text="v.cajero"></td>
+                            <td style="padding: 6px; color: #6b7280;" x-text="v.hora"></td>
+                            <td style="padding: 6px; text-align: right; font-weight: bold; color: #111827;" x-text="'$' + (v.total || 0).toFixed(2)"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FIRMAS INSTITUCIONALES -->
+        <div style="margin-top: 40px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; text-align: center; font-size: 11px; color: #4b5563;">
+            <div>
+                <div style="border-bottom: 1px solid #9ca3af; margin-bottom: 6px; height: 35px;"></div>
+                <p style="margin: 0; font-weight: bold;">Firma del Cajero en Turno</p>
+            </div>
+            <div>
+                <div style="border-bottom: 1px solid #9ca3af; margin-bottom: 6px; height: 35px;"></div>
+                <p style="margin: 0; font-weight: bold;">Firma del Administrador / Validador</p>
+            </div>
+        </div>
+
+    </div>
+
 </div>
 
-<!-- LÓGICA JAVASCRIPT SEPARADA DE LOS ATRIBUTOS HTML -->
+<!-- LÓGICA JAVASCRIPT -->
 <script>
 function reportesComponent() {
     return {
