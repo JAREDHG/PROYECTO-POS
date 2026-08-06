@@ -4,7 +4,7 @@
 
 Sistema POS integral con el backend desarrollado, documentado y un frontend interactivo construido con **Tailwind CSS** y **Alpine.js**. 
 
-### ✅ Módulos y Funcionalidades Completadas:
+### Módulos y Funcionalidades Completadas:
 * [x] **Dashboard:** Métricas y datos reales conectados directamente con la API.
 * [x] **Punto de Venta (POS):** Catálogo interactivo de productos con categorías funcionales y carrito de compras reactivo.
 * [x] **Control de Pagos (POS):** Bloqueo interactivo temporal de Tarjeta y Transferencia con aviso de mantenimiento y estilo visual en alerta.
@@ -14,7 +14,7 @@ Sistema POS integral con el backend desarrollado, documentado y un frontend inte
 * [x] **Seguridad y Roles:** Protección de rutas de API mediante Laravel Sanctum y políticas de autorización (`can:manage products`, `can:process sales`).
 * [x] **Documentación:** Endpoints documentados con Swagger / OpenAPI.
 
-### 📋 Pendientes por Desarrollar:
+### Pendientes por Desarrollar:
 * [ ] **Reportes:** Revisión de módulos analíticos, buscador dinámico y función de exportación/descarga.
 * [x] **Usuarios / Roles:** Vinculación visual del usuario autenticado, bloqueo de vistas de administrador para cajeros, y módulo de registro/modificación de personal.
 * [x] **Módulo de Cajero:** Pruebas integrales de flujo transaccional y restricciones de caja.
