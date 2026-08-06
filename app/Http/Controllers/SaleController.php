@@ -40,16 +40,16 @@ class SaleController extends Controller
         )
     )]
     public function index()
-    {
-        // Traemos todas las ventas, incluyendo sus items y los datos del producto
-        $sales = Sale::with('items.product')->orderBy('created_at', 'desc')->get();
+{
+    // Carga explícita del cajero (user) y los productos vendidos (items.product)
+    $sales = Sale::with(['user', 'items.product'])->orderBy('created_at', 'desc')->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Historial recuperado con éxito.',
-            'data' => $sales
-        ], 200);
-    }
+    return response()->json([
+        'success' => true,
+        'message' => 'Historial recuperado con éxito.',
+        'data' => $sales
+    ], 200);
+}
 
     // =======================================================
     // 2. MÉTODO PARA PROCESAR LA VENTA (POST)

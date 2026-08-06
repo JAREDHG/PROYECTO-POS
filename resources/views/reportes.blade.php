@@ -1,61 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- CONTENEDOR PRINCIPAL CORTE DE CAJA / REPORTES (ALPINE.JS) -->
-<div x-data="{
-    cajeroFiltro: 'Todos',
-    fechaFiltro: '2026-07-20',
-
-    // Registro de ventas del turno (Coincide exacto con la imagen 2: image_b804d5.png)
-    ventas: [
-        { folio: 'TK-I3BINK', productos: '1× Coca-Cola 600ml, 2× Frijol Negro 1kg, 1× Ag...', total: 108.00, metodo: 'Efectivo', iconoMetodo: '💵', cajero: 'María García', hora: '11:27 p.m.' },
-        { folio: 'TK-A1B2C3', productos: '2× Leche Lala 1L, 3× Coca-Cola 600ml', total: 102.00, metodo: 'Efectivo', iconoMetodo: '💵', cajero: 'María García', hora: '10:51 p.m.' },
-        { folio: 'TK-D4E5F6', productos: '1× Pan Bimbo Grande, 1× Arroz Morelos 1kg, 1×...', total: 127.00, metodo: 'Tarjeta', iconoMetodo: '💳', cajero: 'Juan López', hora: '10:27 p.m.' },
-        { folio: 'TK-G7H8I9', productos: '2× Sabritas Clásicas 45g, 2× Pepsi 600ml, 1× A...', total: 76.00, metodo: 'Efectivo', iconoMetodo: '💵', cajero: 'María García', hora: '09:41 p.m.' },
-        { folio: 'TK-J0K1L2', productos: '1× Jabón Palmolive 150g, 1× Papel Higiénico 4r,...', total: 92.00, metodo: 'Transferencia', iconoMetodo: '📲', cajero: 'Juan López', hora: '08:59 p.m.' },
-        { folio: 'TK-M3N4O5', productos: '1× Huevo Bachoco 12pz, 1× Aceite 1-2-3 1L, 1× ...', total: 136.00, metodo: 'Efectivo', iconoMetodo: '💵', cajero: 'María García', hora: '08:14 p.m.' },
-        { folio: 'TK-P6Q7R8', productos: '1× Queso Oaxaca 400g, 1× Leche Lala 1L', total: 96.00, metodo: 'Tarjeta', iconoMetodo: '💳', cajero: 'Juan López', hora: '07:21 p.m.' },
-        { folio: 'TK-S9T0U1', productos: '3× Galletas Marías 200g, 2× Jugo Del Valle 1L', total: 106.00, metodo: 'Efectivo', iconoMetodo: '💵', cajero: 'María García', hora: '06:27 p.m.' },
-        { folio: 'TK-V2W3X4', productos: '4× Coca-Cola 600ml, 2× Ruffles 45g', total: 102.00, metodo: 'Efectivo', iconoMetodo: '💵', cajero: 'Juan López', hora: '05:24 p.m.' }
-    ],
-
-    // Filtrar por cajero activo
-    get ventasFiltradas() {
-        if (this.cajeroFiltro === 'Todos') return this.ventas;
-        return this.ventas.filter(v => v.cajero === this.cajeroFiltro);
-    },
-
-    // Métricas Calculadas
-    get totalOperaciones() {
-        return this.ventasFiltradas.length;
-    },
-    get ingresosTotales() {
-        return this.ventasFiltradas.reduce((sum, v) => sum + v.total, 0);
-    },
-    get ticketPromedio() {
-        return this.totalOperaciones > 0 ? (this.ingresosTotales / this.totalOperaciones) : 0;
-    },
-
-    // Desglose por Método
-    get totalEfectivo() {
-        return this.ventasFiltradas.filter(v => v.metodo === 'Efectivo').reduce((sum, v) => sum + v.total, 0);
-    },
-    get opsEfectivo() {
-        return this.ventasFiltradas.filter(v => v.metodo === 'Efectivo').length;
-    },
-    get totalTarjeta() {
-        return this.ventasFiltradas.filter(v => v.metodo === 'Tarjeta').reduce((sum, v) => sum + v.total, 0);
-    },
-    get opsTarjeta() {
-        return this.ventasFiltradas.filter(v => v.metodo === 'Tarjeta').length;
-    },
-    get totalTransferencia() {
-        return this.ventasFiltradas.filter(v => v.metodo === 'Transferencia').reduce((sum, v) => sum + v.total, 0);
-    },
-    get opsTransferencia() {
-        return this.ventasFiltradas.filter(v => v.metodo === 'Transferencia').length;
-    }
-}" class="space-y-6">
+<!-- CONTENEDOR PRINCIPAL CORTE DE CAJA / REPORTES -->
+<div x-data="reportesComponent()" x-init="cargarVentas()" class="space-y-6">
 
     <!-- ENCABEZADO CORTE DE CAJA -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -63,69 +10,60 @@
             <h1 class="text-2xl font-black text-white tracking-tight">Corte de Caja</h1>
             <p class="text-xs text-gray-400 mt-0.5">RF04 · Trazabilidad y auditoría del turno</p>
         </div>
-    </div>
 
-    <!-- FILTROS (CAJEROS Y FECHA) -->
-    <div class="flex flex-wrap items-center gap-3">
-        <!-- Selector de Cajeros -->
-        <div class="bg-[#18202c] p-1 rounded-xl border border-gray-800 flex items-center gap-1">
-            <button @click="cajeroFiltro = 'Todos'" 
-                    :class="cajeroFiltro === 'Todos' ? 'bg-emerald-600/30 text-emerald-400 font-bold border border-emerald-500/30' : 'text-gray-400 hover:text-white'"
-                    class="px-4 py-1.5 rounded-lg text-xs transition">
-                Todos
+        <div class="flex gap-2">
+            <button @click="exportarExcel()" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                📊 Exportar Excel
             </button>
-            <button @click="cajeroFiltro = 'María García'" 
-                    :class="cajeroFiltro === 'María García' ? 'bg-emerald-600/30 text-emerald-400 font-bold border border-emerald-500/30' : 'text-gray-400 hover:text-white'"
-                    class="px-4 py-1.5 rounded-lg text-xs transition">
-                María García
-            </button>
-            <button @click="cajeroFiltro = 'Juan López'" 
-                    :class="cajeroFiltro === 'Juan López' ? 'bg-emerald-600/30 text-emerald-400 font-bold border border-emerald-500/30' : 'text-gray-400 hover:text-white'"
-                    class="px-4 py-1.5 rounded-lg text-xs transition">
-                Juan López
+            <button @click="imprimirCorte()" class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                🖨️ Imprimir Corte
             </button>
         </div>
+    </div>
 
-        <!-- Selector de Fecha -->
-        <div class="bg-[#18202c] px-3 py-1.5 rounded-xl border border-gray-800 text-xs text-gray-300 flex items-center gap-2">
-            <span>📅</span>
-            <span>20 de julio de 2026</span>
+    <!-- FILTROS Y BÚSQUEDA -->
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="bg-[#18202c] p-1 rounded-xl border border-gray-800 flex items-center gap-1 overflow-x-auto">
+            <template x-for="c in cajerosDisponibles" :key="c">
+                <button @click="cajeroFiltro = c" 
+                        :class="cajeroFiltro === c ? 'bg-emerald-600/30 text-emerald-400 font-bold border border-emerald-500/30' : 'text-gray-400 hover:text-white'"
+                        class="px-4 py-1.5 rounded-lg text-xs transition whitespace-nowrap"
+                        x-text="c">
+                </button>
+            </template>
+        </div>
+
+        <div class="relative w-full sm:w-64">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-xs">🔍</span>
+            <input type="text" 
+                   x-model="busqueda" 
+                   placeholder="Buscar folio o producto..." 
+                   class="w-full bg-[#18202c] border border-gray-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition">
         </div>
     </div>
 
     <!-- TARJETAS SUPERIORES DE MÉTRICAS GENERALES -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        
-        <!-- Total Operaciones -->
         <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl p-5 relative overflow-hidden shadow-xl">
-            <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-gray-300 flex items-center justify-center text-sm mb-4">
-                📋
-            </div>
+            <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-gray-300 flex items-center justify-center text-sm mb-4">📋</div>
             <div class="text-3xl font-black text-white font-mono" x-text="totalOperaciones"></div>
             <div class="text-xs font-semibold text-gray-400 mt-1">Total Operaciones</div>
             <div class="text-[10px] text-gray-500 mt-0.5">ventas del turno</div>
         </div>
 
-        <!-- Ingresos Totales -->
         <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl p-5 relative overflow-hidden shadow-xl">
-            <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-amber-400 flex items-center justify-center text-sm mb-4">
-                💰
-            </div>
+            <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-amber-400 flex items-center justify-center text-sm mb-4">💰</div>
             <div class="text-3xl font-black text-white font-mono" x-text="'$' + ingresosTotales.toFixed(2)"></div>
             <div class="text-xs font-semibold text-gray-400 mt-1">Ingresos Totales</div>
             <div class="text-[10px] text-gray-500 mt-0.5">suma de ventas</div>
         </div>
 
-        <!-- Ticket Promedio -->
         <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl p-5 relative overflow-hidden shadow-xl">
-            <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-purple-400 flex items-center justify-center text-sm mb-4">
-                📊
-            </div>
+            <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-purple-400 flex items-center justify-center text-sm mb-4">📊</div>
             <div class="text-3xl font-black text-white font-mono" x-text="'$' + ticketPromedio.toFixed(2)"></div>
             <div class="text-xs font-semibold text-gray-400 mt-1">Ticket Promedio</div>
             <div class="text-[10px] text-gray-500 mt-0.5">por operación</div>
         </div>
-
     </div>
 
     <!-- DESGLOSE POR MÉTODO DE PAGO -->
@@ -133,8 +71,6 @@
         <h3 class="text-sm font-bold text-white">Desglose por Método de Pago</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
-            <!-- Efectivo -->
             <div class="bg-[#18202c] border border-gray-800 rounded-xl p-4 flex items-center gap-4">
                 <div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-lg">💵</div>
                 <div>
@@ -144,7 +80,6 @@
                 </div>
             </div>
 
-            <!-- Tarjeta -->
             <div class="bg-[#18202c] border border-gray-800 rounded-xl p-4 flex items-center gap-4">
                 <div class="p-2.5 rounded-lg bg-blue-500/10 text-blue-400 text-lg">💳</div>
                 <div>
@@ -154,7 +89,6 @@
                 </div>
             </div>
 
-            <!-- Transferencia -->
             <div class="bg-[#18202c] border border-gray-800 rounded-xl p-4 flex items-center gap-4">
                 <div class="p-2.5 rounded-lg bg-purple-500/10 text-purple-400 text-lg">📲</div>
                 <div>
@@ -163,21 +97,17 @@
                     <div class="text-[10px] text-gray-500 font-mono" x-text="opsTransferencia + ' ops.'"></div>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- REGISTRO DE VENTAS DEL TURNO (TABLA DETALLADA EXACTA A LA SEGUNDA IMAGEN) -->
+    <!-- REGISTRO DE VENTAS DEL TURNO -->
     <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl overflow-hidden shadow-2xl">
-        
-        <!-- Encabezado Tabla -->
         <div class="p-5 border-b border-gray-800 flex justify-between items-center bg-[#101721]">
             <h3 class="text-sm font-bold text-white">Registro de Ventas del Turno</h3>
             <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold px-3 py-1 rounded-lg font-mono"
                   x-text="ventasFiltradas.length + ' operaciones'"></span>
         </div>
 
-        <!-- Tabla -->
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -191,51 +121,205 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-800/60 text-xs font-medium text-gray-300">
-                    <template x-for="v in ventasFiltradas" :key="v.folio">
+                    <template x-if="cargando">
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-gray-400">Cargando transacciones de la base de datos...</td>
+                        </tr>
+                    </template>
+
+                    <template x-if="!cargando && error">
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-red-400" x-text="error"></td>
+                        </tr>
+                    </template>
+
+                    <template x-if="!cargando && !error && ventasFiltradas.length === 0">
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-gray-500">No hay ventas registradas para este filtro.</td>
+                        </tr>
+                    </template>
+
+                    <template x-for="v in ventasFiltradas" :key="v.id || v.folio">
                         <tr class="hover:bg-gray-800/30 transition">
-                            
-                            <!-- FOLIO (DESTACADO EN VERDE) -->
                             <td class="py-4 px-6 font-mono font-bold text-emerald-400" x-text="v.folio"></td>
-
-                            <!-- PRODUCTOS DESGLOSADOS -->
                             <td class="py-4 px-6 text-gray-300 max-w-xs truncate" x-text="v.productos"></td>
-
-                            <!-- TOTAL (MONOESPACIADO BOLD) -->
-                            <td class="py-4 px-6 font-mono font-black text-white" x-text="'$' + v.total.toFixed(2)"></td>
-
-                            <!-- MÉTODO -->
+                            <td class="py-4 px-6 font-mono font-black text-white" x-text="'$' + (v.total || 0).toFixed(2)"></td>
                             <td class="py-4 px-6">
                                 <span class="inline-flex items-center gap-1.5 text-xs text-gray-300">
                                     <span x-text="v.iconoMetodo"></span>
                                     <span x-text="v.metodo"></span>
                                 </span>
                             </td>
-
-                            <!-- CAJERO -->
                             <td class="py-4 px-6 text-gray-300" x-text="v.cajero"></td>
-
-                            <!-- HORA -->
                             <td class="py-4 px-6 font-mono text-gray-400" x-text="v.hora"></td>
-
                         </tr>
                     </template>
                 </tbody>
             </table>
         </div>
 
-        <!-- PIE DE TABLA CON TOTAL CORTE DE CAJA -->
         <div class="p-4 bg-[#0f151e] border-t border-gray-800 flex justify-between items-center text-xs">
-            <span class="text-gray-500 font-mono">Corte al 11:35 p.m.</span>
+            <span class="text-gray-500 font-mono">Corte en tiempo real</span>
             <div class="flex items-center gap-2">
                 <span class="text-gray-400 font-bold uppercase tracking-wider">Total:</span>
                 <span class="text-lg font-black text-emerald-400 font-mono" x-text="'$' + ingresosTotales.toFixed(2)"></span>
             </div>
         </div>
-
     </div>
-
 </div>
 
-<!-- Alpine.js -->
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<!-- LÓGICA JAVASCRIPT SEPARADA DE LOS ATRIBUTOS HTML -->
+<script>
+function reportesComponent() {
+    return {
+        cajeroFiltro: 'Todos',
+        busqueda: '',
+        ventas: [],
+        cargando: true,
+        error: '',
+
+        async cargarVentas() {
+            const tokenActual = localStorage.getItem('auth_token');
+            if (!tokenActual) {
+                window.location.href = '/';
+                return;
+            }
+
+            this.cargando = true;
+            this.error = '';
+
+            try {
+                const response = await fetch('/api/sales', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + tokenActual
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.clear();
+                        window.location.href = '/';
+                        return;
+                    }
+                    throw new Error('Error al conectar con el servidor.');
+                }
+
+                const jsonResponse = await response.json();
+                const ventasRaw = jsonResponse.data || (Array.isArray(jsonResponse) ? jsonResponse : []);
+
+                this.ventas = ventasRaw.map(v => {
+                    let horaStr = 'Reciente';
+                    if (v && v.created_at) {
+                        try {
+                            const fechaObj = new Date(v.created_at);
+                            horaStr = fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase();
+                        } catch(e){}
+                    }
+
+                    let resumenProductos = 'Venta de productos';
+                    if (v && v.items && Array.isArray(v.items) && v.items.length > 0) {
+                        resumenProductos = v.items.map(i => {
+                            const cant = i.quantity || 1;
+                            const nom = (i.product && i.product.name) ? i.product.name : (i.name || 'Producto');
+                            return cant + '× ' + nom;
+                        }).join(', ');
+                    }
+
+                    let metodoRaw = String((v && v.payment_method) ? v.payment_method : 'efectivo').toLowerCase();
+                    let metodoFormatted = metodoRaw.charAt(0).toUpperCase() + metodoRaw.slice(1);
+                    let icono = '💵';
+                    if (metodoRaw === 'tarjeta') icono = '💳';
+                    if (metodoRaw === 'transferencia') icono = '📲';
+
+                    return {
+                        id: (v && v.id) ? v.id : Math.random(),
+                        folio: (v && v.ticket_number) ? v.ticket_number : ('TK-' + String((v && v.id) ? v.id : '0').padStart(6, '0')),
+                        productos: resumenProductos,
+                        total: Number((v && v.total) ? v.total : 0),
+                        metodo: metodoFormatted,
+                        iconoMetodo: icono,
+                        cajero: (v && v.user && v.user.name) ? v.user.name : 'Cajero General',
+                        hora: horaStr
+                    };
+                });
+
+            } catch (err) {
+                this.error = err.message;
+                console.error('Error al cargar reportes:', err);
+            } finally {
+                this.cargando = false;
+            }
+        },
+
+        get cajerosDisponibles() {
+            if (!Array.isArray(this.ventas)) return ['Todos'];
+            const nombres = this.ventas.map(v => v.cajero);
+            return ['Todos', ...new Set(nombres)];
+        },
+
+        get ventasFiltradas() {
+            if (!Array.isArray(this.ventas)) return [];
+            return this.ventas.filter(v => {
+                const coincideCajero = this.cajeroFiltro === 'Todos' || v.cajero === this.cajeroFiltro;
+                const coincideBusqueda = String(v.folio || '').toLowerCase().includes(this.busqueda.toLowerCase()) || 
+                                         String(v.productos || '').toLowerCase().includes(this.busqueda.toLowerCase());
+                return coincideCajero && coincideBusqueda;
+            });
+        },
+
+        get totalOperaciones() {
+            return this.ventasFiltradas.length;
+        },
+        get ingresosTotales() {
+            return this.ventasFiltradas.reduce((sum, v) => sum + (Number(v.total) || 0), 0);
+        },
+        get ticketPromedio() {
+            return this.totalOperaciones > 0 ? (this.ingresosTotales / this.totalOperaciones) : 0;
+        },
+
+        get totalEfectivo() {
+            return this.ventasFiltradas.filter(v => String(v.metodo || '').toLowerCase() === 'efectivo').reduce((sum, v) => sum + v.total, 0);
+        },
+        get opsEfectivo() {
+            return this.ventasFiltradas.filter(v => String(v.metodo || '').toLowerCase() === 'efectivo').length;
+        },
+        get totalTarjeta() {
+            return this.ventasFiltradas.filter(v => String(v.metodo || '').toLowerCase() === 'tarjeta').reduce((sum, v) => sum + v.total, 0);
+        },
+        get opsTarjeta() {
+            return this.ventasFiltradas.filter(v => String(v.metodo || '').toLowerCase() === 'tarjeta').length;
+        },
+        get totalTransferencia() {
+            return this.ventasFiltradas.filter(v => String(v.metodo || '').toLowerCase() === 'transferencia').reduce((sum, v) => sum + v.total, 0);
+        },
+        get opsTransferencia() {
+            return this.ventasFiltradas.filter(v => String(v.metodo || '').toLowerCase() === 'transferencia').length;
+        },
+
+        exportarExcel() {
+            if (this.ventasFiltradas.length === 0) {
+                alert('No hay ventas registradas para exportar.');
+                return;
+            }
+
+            let csv = 'Folio,Productos,Total,Metodo,Cajero,Hora\n';
+            this.ventasFiltradas.forEach(v => {
+                const prodLimpio = String(v.productos || '').split('"').join('""');
+                csv += '"' + v.folio + '","' + prodLimpio + '",' + Number(v.total || 0).toFixed(2) + ',"' + v.metodo + '","' + v.cajero + '","' + v.hora + '"\n';
+            });
+
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Corte_Caja_' + new Date().toISOString().slice(0, 10) + '.csv';
+            link.click();
+        },
+
+        imprimirCorte() {
+            window.print();
+        }
+    }
+}
+</script>
 @endsection
