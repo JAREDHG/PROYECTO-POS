@@ -12,11 +12,18 @@
     <!-- SCRIPT DE SEGURIDAD (URL GUARD) -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('auth_token');
             const userEmail = localStorage.getItem('user_email') || '';
             const userRole = localStorage.getItem('user_role') || '';
             const userRoles = JSON.parse(localStorage.getItem('user_roles') || '[]');
             
-            // Evaluamos si es administrador por email, rol o arreglo de roles
+            // Si NO hay token activo, expulsar al login
+            if (!token) {
+                window.location.href = '/';
+                return;
+            }
+
+            // Evaluamos si es administrador
             const esAdmin = userEmail.includes('admin') || 
                             userRole.toLowerCase().includes('admin') || 
                             userRoles.some(r => String(r).toLowerCase().includes('admin'));
@@ -65,8 +72,8 @@
                     </a>
                 </template>
                 
-                <!-- 2. Punto de Venta (Visible para Todos) -->
-                <a href="{{ url('/') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('/') || Request::is('pos') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                <!-- 2. Punto de Venta (Ajustado a /pos para no ir a la raíz / del login) -->
+                <a href="{{ url('pos') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('pos') || Request::is('/') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
                     <span>💻</span> Punto de Venta
                 </a>
                 

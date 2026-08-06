@@ -2,82 +2,30 @@
 
 @section('content')
 <div x-data="{
-    // === ESTADO DE AUTENTICACIÓN ===
+    // === ESTADO DE SESIÓN GLOBAL ===
     token: localStorage.getItem('auth_token') || null,
-    loginEmail: '',
-    loginPassword: '',
-    loginError: null,
-    loginLoading: false,
-
-    async login() {
-        this.loginLoading = true;
-        this.loginError = null;
-
-        try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json' 
-                },
-                body: JSON.stringify({ 
-                    email: this.loginEmail, 
-                    password: this.loginPassword 
-                })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Credenciales incorrectas');
-            }
-
-            // Guardar token y limpiar formulario
-            this.token = data.access_token;
-            localStorage.setItem('auth_token', data.access_token);
-            this.loginPassword = '';
-
-            // Cargar productos ahora que tenemos permiso
-            this.cargarProductos();
-
-        } catch (error) {
-            this.loginError = error.message;
-        } finally {
-            this.loginLoading = false;
-        }
-    },
-
-    logout() {
-        this.token = null;
-        localStorage.removeItem('auth_token');
-        this.productos = [];
-        this.clearCart();
-    },
-    // ===============================
+    cajero: localStorage.getItem('user_name') || 'Cajero de Turno',
 
     openCobrar: false,
     openTicket: false,
     metodo: 'efectivo',
     recibido: 0,
     
-    // Datos del cajero activo
-    cajero: 'Cajero en Turno',
-
     // Catálogo de productos
     productos: [],
     cargandoProductos: false,
     errorProductos: '',
 
-    // === NUEVAS VARIABLES PARA EL COBRO ===
+    // Transacción
     procesandoVenta: false,
     errorVenta: '',
 
-    // Estado del Carrito
+    // Carrito
     cart: [],
     categoriaSeleccionada: 'Todos',
     busqueda: '',
 
-    // Objeto para almacenar la información del ticket generado
+    // Ticket generado
     ticket: {
         folio: '',
         fecha: '',
@@ -90,25 +38,28 @@
     },
 
     async cargarProductos() {
+        const tokenActual = localStorage.getItem('auth_token');
+        if (!tokenActual) {
+            window.location.href = '/';
+            return;
+        }
+
         this.cargandoProductos = true;
         this.errorProductos = '';
 
         try {
-            const headers = { Accept: 'application/json' };
-            // Ahora siempre usaremos la variable reactiva this.token
-            if (this.token) {
-                headers.Authorization = `Bearer ${this.token}`;
-            } else {
-                throw new Error('No hay sesión activa.');
-            }
-
-            const response = await fetch('/api/products', { headers });
+            const response = await fetch('/api/products', { 
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${tokenActual}`
+                } 
+            });
 
             if (!response.ok) {
-                // Si el token expiró o es inválido, forzamos cerrar sesión
                 if (response.status === 401) {
-                    this.logout();
-                    throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
+                    localStorage.clear();
+                    window.location.href = '/';
+                    return;
                 }
                 throw new Error('No se pudieron cargar los productos desde la API.');
             }
@@ -116,7 +67,7 @@
             const data = await response.json();
             const productosCrudos = Array.isArray(data) ? data : (data.data || []);
 
-            // Aquí clasificamos automáticamente cada producto según su nombre
+            // Clasificación de categoría e ícono
             this.productos = productosCrudos.map(producto => {
                 let nombreLower = producto.name.toLowerCase();
                 let categoriaDetectada = 'General';
@@ -209,13 +160,13 @@
         });
     },
 
-    // === FUNCIÓN DE VENTA REAL CONECTADA A LA API ===
+    // Finalizar venta
     async finalizarVenta() {
+        const tokenActual = localStorage.getItem('auth_token');
         this.procesandoVenta = true;
         this.errorVenta = '';
 
         try {
-            // 1. Armamos el JSON exactamente como lo pide el backend
             const payload = {
                 payment_method: this.metodo,
                 items: this.cart.map(item => ({
@@ -224,13 +175,12 @@
                 }))
             };
 
-            // 2. Hacemos la petición POST a la API
             const response = await fetch('/api/sales', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'Authorization': `Bearer ${this.token}`
+                    'Authorization': `Bearer ${tokenActual}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -241,7 +191,6 @@
                 throw new Error(data.error || data.message || 'Ocurrió un error al registrar la venta.');
             }
 
-            // 3. ¡Venta Exitosa! Construimos el ticket usando los datos del backend
             const ahora = new Date();
             const horaFormateada = ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase();
 
@@ -256,11 +205,8 @@
                 cambio: this.metodo === 'efectivo' ? Math.max(0, this.recibido - data.ticket.total) : 0
             };
 
-            // 4. Cambiamos las pantallas
             this.openCobrar = false;
             this.openTicket = true;
-            
-            // 5. Recargamos los productos para que el Frontend actualice el Stock
             this.cargarProductos();
 
         } catch (error) {
@@ -277,44 +223,7 @@
         this.recibido = 0;
         this.metodo = 'efectivo';
     }
-}" x-init="if(token) cargarProductos()" class="h-full flex flex-col relative">
-
-    <!-- MODAL DE LOGIN BLOQUEADOR -->
-    <div x-show="!token" 
-         class="fixed inset-0 z-[100] flex items-center justify-center bg-[#111827] bg-opacity-95 backdrop-blur-md"
-         style="display: none;">
-        <div class="bg-[#1f2937] p-8 rounded-2xl shadow-2xl border border-gray-700 w-96 max-w-full">
-            <div class="text-center mb-6">
-                <span class="text-4xl block mb-2">🏪</span>
-                <h2 class="text-2xl font-black tracking-tight text-white">Acceso al POS</h2>
-                <p class="text-sm text-gray-400 mt-1">Inicia sesión para abrir caja</p>
-            </div>
-
-            <!-- Mensaje de error dinámico -->
-            <div x-show="loginError" x-text="loginError" style="display: none;" 
-                 class="mb-6 text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-xl text-sm text-center font-semibold">
-            </div>
-
-            <form @submit.prevent="login()">
-                <div class="mb-4 relative">
-                    <label class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wider">Correo</label>
-                    <input x-model="loginEmail" type="email" required placeholder="admin@ejemplo.com" 
-                           class="w-full bg-[#111827] text-white placeholder-gray-600 rounded-xl px-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition">
-                </div>
-                <div class="mb-6 relative">
-                    <label class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wider">Contraseña</label>
-                    <input x-model="loginPassword" type="password" required placeholder="••••••••" 
-                           class="w-full bg-[#111827] text-white placeholder-gray-600 rounded-xl px-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition">
-                </div>
-                <button type="submit" :disabled="loginLoading" 
-                        class="w-full bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-black py-3.5 px-4 rounded-xl text-sm tracking-wide uppercase transition shadow-lg shadow-emerald-500/10 disabled:opacity-50 flex items-center justify-center gap-2">
-                    <span x-show="!loginLoading">🔐 Iniciar Sesión</span>
-                    <span x-show="loginLoading" style="display: none;">Conectando...</span>
-                </button>
-            </form>
-        </div>
-    </div>
-    <!-- FIN MODAL LOGIN -->
+}" x-init="cargarProductos()" class="h-full flex flex-col relative">
 
     <!-- CONTENIDO PRINCIPAL DEL POS -->
     <div class="flex h-full gap-6">
@@ -330,6 +239,7 @@
                 </div>
             </div>
 
+            <!-- Categorías -->
             <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-thin">
                 <button @click="categoriaSeleccionada = 'Todos'" 
                         :class="categoriaSeleccionada === 'Todos' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
@@ -356,6 +266,7 @@
                         class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🧻 Limpieza</button>
             </div>
 
+            <!-- Grilla de Productos -->
             <div class="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pr-1">
                 <template x-if="cargandoProductos">
                     <div class="col-span-full flex items-center justify-center py-12 text-sm text-gray-400">
@@ -397,6 +308,7 @@
 
         </div>
 
+        <!-- Carrito Lateral -->
         <div class="w-96 bg-[#1f2937] rounded-2xl border border-gray-700 flex flex-col h-full overflow-hidden shadow-xl">
             <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-[#1a222f]">
                 <div class="flex items-center gap-2">
@@ -450,7 +362,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE COBRO Y TICKET -->
+    <!-- MODAL DE COBRO -->
     <div x-show="openCobrar" 
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0"
@@ -482,21 +394,18 @@
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-gray-400 tracking-wider uppercase">Método de Pago</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <!-- Efectivo (Activo y funcional) -->
                         <button @click="metodo = 'efectivo'" 
                                 :class="metodo === 'efectivo' ? 'bg-emerald-600 text-black border-emerald-500 font-bold' : 'bg-[#111827] text-gray-400 border-gray-800'" 
                                 class="flex flex-col items-center justify-center py-3 rounded-xl border text-xs transition gap-1">
                             <span>💵</span> Efectivo
                         </button>
 
-                        <!-- Tarjeta (Amarillo, interactivo con alerta de mantenimiento) -->
                         <button @click="alert('⚠️ La opción de Tarjeta se encuentra actualmente en mantenimiento.')" 
                                 class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
                             <span>💳</span> Tarjeta
                             <span class="text-[9px] uppercase tracking-tighter opacity-80">Mantenimiento</span>
                         </button>
 
-                        <!-- Transferencia (Amarillo, interactivo con alerta de mantenimiento) -->
                         <button @click="alert('⚠️ La opción de Transferencia se encuentra actualmente en mantenimiento.')" 
                                 class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
                             <span>🏦</span> Transferencia
@@ -524,7 +433,6 @@
                 </div>
             </div>
             <div class="p-4 bg-[#1a222f] border-t border-gray-700">
-                <!-- === BOTÓN DE COBRO ACTUALIZADO === -->
                 <button @click="finalizarVenta()" 
                         :disabled="(metodo === 'efectivo' && recibido < total) || procesandoVenta"
                         class="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-gray-950 font-black py-4 px-4 rounded-xl text-sm tracking-wide uppercase transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2">
@@ -535,6 +443,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE TICKET -->
     <div x-show="openTicket" 
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 scale-95"
@@ -547,8 +456,8 @@
         
         <div class="bg-white text-gray-900 rounded-3xl p-6 sm:p-7 w-full max-w-sm shadow-2xl font-mono relative border border-gray-200 space-y-4">
             <div class="text-center space-y-1">
-                <h2 class="text-lg font-black tracking-tight text-black">Abarrotes</h2>
-                <p class="text-[11px] text-gray-500 leading-tight">Dirección<br>Tel. (55) xxxxxxxx</p>
+                <h2 class="text-lg font-black tracking-tight text-black">Abarrotes El Surtidor</h2>
+                <p class="text-[11px] text-gray-500 leading-tight">Ticket de Venta</p>
             </div>
             <div class="border-b border-dashed border-gray-300 my-2"></div>
             <div class="text-[11px] text-gray-600 space-y-1">
@@ -623,6 +532,4 @@
         </div>
     </div>
 </div>
-
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 @endsection
