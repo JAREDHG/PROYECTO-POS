@@ -16,7 +16,7 @@ Sistema POS integral con el backend desarrollado, documentado y un frontend inte
 
 ### 📋 Pendientes por Desarrollar:
 * [ ] **Reportes:** Revisión de módulos analíticos, buscador dinámico y función de exportación/descarga.
-* [ ] **Usuarios / Roles:** Vinculación visual del usuario autenticado, bloqueo de vistas de administrador para cajeros, y módulo de registro/modificación de personal.
+* [x] **Usuarios / Roles:** Vinculación visual del usuario autenticado, bloqueo de vistas de administrador para cajeros, y módulo de registro/modificación de personal.
 * [ ] **Módulo de Cajero:** Pruebas integrales de flujo transaccional y restricciones de caja.
 * [x] **Base de Datos:** Ajuste de políticas de integridad referencial (borrado en cascada o baja lógica) para evitar bloqueos por llaves foráneas al eliminar productos con historial de ventas.
 

@@ -64,6 +64,9 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->firstOrFail();
         $token = $user->createToken('pos_auth_token')->plainTextToken;
 
+        // Obtenemos los roles de forma segura (fallback a array si no tiene)
+        $roles = method_exists($user, 'getRoleNames') ? $user->getRoleNames()->toArray() : [];
+
         return response()->json([
             'message' => 'Login exitoso',
             'access_token' => $token,
@@ -72,8 +75,9 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-            ]
-        ]);
+            ],
+            'roles' => $roles,
+        ], 200);
     }
 
     #[OA\Post(

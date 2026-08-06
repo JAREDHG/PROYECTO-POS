@@ -8,10 +8,14 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// 1. Ruta de bienvenida por defecto de Laravel
+// 1. Pantalla de Acceso al POS (Login)
 Route::get('/', function () {
-    return view('pos');
+    return view('login');
 });
+
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
 
 // 2. Interfaz del Punto de Venta (Carrito, Cobro y Modal de Pago)
 Route::get('/pos', function () {

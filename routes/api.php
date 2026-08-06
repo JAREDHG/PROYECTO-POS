@@ -29,26 +29,29 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     /**
-     * RF01 - Gestión Centralizada de Inventario
+     * CONSULTA DE CATÁLOGO
+     * Accesible para cualquier usuario autenticado (Admin y Cajero necesitan ver el catálogo)
+     */
+    Route::get('/products', [ProductController::class, 'index']);
+
+    /**
+     * RF01 - Administración y Modificación de Inventario
      * Capa de seguridad: Solo usuarios con permiso 'manage products' (Admin)
      */
     Route::middleware('can:manage products')->group(function () {
-        // 1. Consulta de Inventario Activo
-        Route::get('/products', [ProductController::class, 'index']);
-        
-        // 2. Consulta de Papelera (Ruta estática: va ANTES de {product})
+        // 1. Consulta de Papelera (Ruta estática: va ANTES de {product})
         Route::get('/products/inactive', [ProductController::class, 'inactive']);
         
-        // 3. Crear Producto
+        // 2. Crear Producto
         Route::post('/products', [ProductController::class, 'store']);
         
-        // 4. Reactivar Producto en Papelera
+        // 3. Reactivar Producto en Papelera
         Route::put('/products/{product}/restore', [ProductController::class, 'restore']);
         
-        // 5. Actualizar Producto Activo
+        // 4. Actualizar Producto Activo
         Route::put('/products/{product}', [ProductController::class, 'update']);
         
-        // 6. Baja Lógica de Producto
+        // 5. Baja Lógica de Producto
         Route::delete('/products/{product}', [ProductController::class, 'destroy']);
     });
 
