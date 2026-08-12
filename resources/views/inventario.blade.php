@@ -186,8 +186,7 @@
     },
 
     obtenerIcono(cat) {
-        const mapa = { 'Lácteos': , 'Panadería': , 'Bebidas': , 'Botanas': , 'Limpieza': , 'Básicos':  };
-        return mapa[cat] || ;
+        return '';
     }
 }" class="space-y-6">
 
