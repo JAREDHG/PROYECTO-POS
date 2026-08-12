@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 
 #[OA\Info(version: "1.0.0", description: "Documentación interactiva de la API", title: "API POS Seguro")]
-#[OA\Server(url: L5_SWAGGER_CONST_HOST, description: "Servidor API Principal")]
+#[OA\Server(url: "L5_SWAGGER_CONST_HOST", description: "Servidor API Principal")]
 #[OA\SecurityScheme(
     securityScheme: "sanctum",
     type: "http",
@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
 class AuthController extends Controller
 {
     #[OA\Post(
-        path: "/login",
+        path: "/api/login",
         summary: "Iniciar sesión",
         description: "Autentica al usuario y devuelve un token de Sanctum",
         tags: ["Autenticación"]
@@ -81,7 +81,7 @@ class AuthController extends Controller
     }
 
     #[OA\Post(
-        path: "/logout",
+        path: "/api/logout",
         summary: "Cerrar sesión",
         security: [["sanctum" => []]],
         tags: ["Autenticación"]
