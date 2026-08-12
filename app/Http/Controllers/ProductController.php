@@ -11,7 +11,7 @@ class ProductController extends Controller
     #[OA\Get(
         path: "/products",
         summary: "Obtener inventario activo",
-        description: "Devuelve la lista completa de productos activosdisponibles",
+        description: "Devuelve la lista completa de productos activos disponibles",
         security: [["sanctum" => []]],
         tags: ["Productos"]
     )]
@@ -109,6 +109,7 @@ class ProductController extends Controller
         security: [["sanctum" => []]],
         tags: ["Productos"]
     )]
+    #[OA\Response(response: 200, description: "Lista de productos inactivos obtenida correctamente")]
     public function inactive()
     {
         return response()->json(Product::where('is_active', false)->get());
@@ -121,6 +122,7 @@ class ProductController extends Controller
         security: [["sanctum" => []]],
         tags: ["Productos"]
     )]
+    #[OA\Response(response: 200, description: "Producto reactivado correctamente")]
     public function restore(Product $product)
     {
         $product->update(['is_active' => true]);
