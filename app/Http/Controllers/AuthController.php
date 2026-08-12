@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 
 #[OA\Info(version: "1.0.0", description: "Documentación interactiva de la API", title: "API POS Seguro")]
-#[OA\Server(url: "L5_SWAGGER_CONST_HOST", description: "Servidor API Principal")]
+#[OA\Server(url: \L5_SWAGGER_CONST_HOST, description: "Servidor API Principal")]
 #[OA\SecurityScheme(
     securityScheme: "sanctum",
     type: "http",
