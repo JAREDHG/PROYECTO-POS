@@ -9,7 +9,7 @@ use OpenApi\Attributes as OA;
 class ProductController extends Controller
 {
     #[OA\Get(
-        path: "/products",
+        path: "/api/products",
         summary: "Obtener inventario activo",
         description: "Devuelve la lista completa de productos activos disponibles",
         security: [["sanctum" => []]],
@@ -22,7 +22,7 @@ class ProductController extends Controller
     }
 
     #[OA\Post(
-        path: "/products",
+        path: "/api/products",
         summary: "Registrar producto",
         description: "Añade un nuevo producto al catálogo",
         security: [["sanctum" => []]],
@@ -57,7 +57,7 @@ class ProductController extends Controller
     }
 
     #[OA\Put(
-        path: "/products/{id}",
+        path: "/api/products/{id}",
         summary: "Actualizar producto",
         description: "Modifica los datos de un producto existente",
         security: [["sanctum" => []]],
@@ -84,7 +84,7 @@ class ProductController extends Controller
     }
 
     #[OA\Delete(
-        path: "/products/{id}",
+        path: "/api/products/{id}",
         summary: "Desactivar producto",
         description: "Realiza una baja lógica del producto en el inventario",
         security: [["sanctum" => []]],
@@ -103,7 +103,7 @@ class ProductController extends Controller
     }
 
     #[OA\Get(
-        path: "/products/inactive",
+        path: "/api/products/inactive",
         summary: "Obtener productos inactivos",
         description: "Devuelve los productos dados de baja lógicamente",
         security: [["sanctum" => []]],
@@ -116,7 +116,7 @@ class ProductController extends Controller
     }
 
     #[OA\Put(
-        path: "/products/{id}/restore",
+        path: "/api/products/{id}/restore",
         summary: "Reactivar producto",
         description: "Restaura un producto dado de baja lógica al inventario activo",
         security: [["sanctum" => []]],
