@@ -83,7 +83,7 @@
         </div>
         <a href="/inventario" 
            class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition">
-            ⬅️ Volver al Inventario
+            ⬅ Volver al Inventario
         </a>
     </div>
 
@@ -99,7 +99,7 @@
 
     <!-- BÚSQUEDA -->
     <div class="relative w-full max-w-md">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">🔍</span>
+        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"></span>
         <input type="text" 
                x-model="search" 
                placeholder="Buscar producto inactivo por nombre o SKU..." 
@@ -132,7 +132,7 @@
                             <td class="py-4 px-6 text-center">
                                 <button @click="reactivarProducto(prod)" 
                                         class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-[11px] font-bold transition">
-                                    ♻️ Reactivar
+                                    Reactivar
                                 </button>
                             </td>
                         </tr>

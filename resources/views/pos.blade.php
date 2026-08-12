@@ -67,27 +67,21 @@
             const data = await response.json();
             const productosCrudos = Array.isArray(data) ? data : (data.data || []);
 
-            // Clasificación de categoría e ícono
+            // Clasificación de categoría sin íconos
             this.productos = productosCrudos.map(producto => {
                 let nombreLower = producto.name.toLowerCase();
                 let categoriaDetectada = 'General';
-                let iconoDetectado = '📦';
 
                 if (nombreLower.includes('leche') || nombreLower.includes('queso') || nombreLower.includes('yogurt') || nombreLower.includes('crema')) {
                     categoriaDetectada = 'Lácteos';
-                    iconoDetectado = '🥛';
                 } else if (nombreLower.includes('pan') || nombreLower.includes('concha') || nombreLower.includes('bolillo') || nombreLower.includes('pastel')) {
                     categoriaDetectada = 'Panadería';
-                    iconoDetectado = '🍞';
                 } else if (nombreLower.includes('coca') || nombreLower.includes('pepsi') || nombreLower.includes('agua') || nombreLower.includes('jugo') || nombreLower.includes('refresco')) {
                     categoriaDetectada = 'Bebidas';
-                    iconoDetectado = '🥤';
                 } else if (nombreLower.includes('sabritas') || nombreLower.includes('ruffles') || nombreLower.includes('totis') || nombreLower.includes('galletas') || nombreLower.includes('papas')) {
                     categoriaDetectada = 'Botanas';
-                    iconoDetectado = '🍿';
                 } else if (nombreLower.includes('jabon') || nombreLower.includes('cloro') || nombreLower.includes('detergente') || nombreLower.includes('papel')) {
                     categoriaDetectada = 'Limpieza';
-                    iconoDetectado = '🧻';
                 }
 
                 return {
@@ -96,7 +90,6 @@
                     sku: producto.sku,
                     nombre: producto.name,
                     categoria: categoriaDetectada,
-                    categoriaIcono: iconoDetectado,
                     precio: Number(producto.sale_price),
                     stock: Number(producto.stock)
                 };
@@ -247,23 +240,23 @@
 
                 <button @click="categoriaSeleccionada = 'Lácteos'"
                     :class="categoriaSeleccionada === 'Lácteos' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🥛 Lácteos</button>
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">Lácteos</button>
 
                 <button @click="categoriaSeleccionada = 'Panadería'"
                     :class="categoriaSeleccionada === 'Panadería' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🍞 Panadería</button>
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">Panadería</button>
 
                 <button @click="categoriaSeleccionada = 'Bebidas'"
                     :class="categoriaSeleccionada === 'Bebidas' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🥤 Bebidas</button>
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">Bebidas</button>
 
                 <button @click="categoriaSeleccionada = 'Botanas'"
                     :class="categoriaSeleccionada === 'Botanas' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🍿 Botanas</button>
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">Botanas</button>
 
                 <button @click="categoriaSeleccionada = 'Limpieza'"
                     :class="categoriaSeleccionada === 'Limpieza' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🧻 Limpieza</button>
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">Limpieza</button>
             </div>
 
             <!-- Grilla de Productos -->
@@ -296,7 +289,7 @@
 
                         <div class="mb-4">
                             <span class="text-[11px] text-gray-500 block font-medium uppercase tracking-wider mb-1"
-                                x-text="producto.categoriaIcono + ' ' + producto.categoria"></span>
+                                x-text="producto.categoria"></span>
                             <h3 class="font-semibold text-white text-sm leading-snug group-hover:text-emerald-400 transition"
                                 x-text="producto.nombre"></h3>
                         </div>
@@ -372,7 +365,7 @@
                 <button @click="recibido = total; openCobrar = true"
                     :disabled="cart.length === 0"
                     class="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:hover:bg-emerald-500 text-gray-950 font-bold py-3.5 px-4 rounded-xl text-sm transition tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
-                    💰 Cobrar <span x-text="'$' + total.toFixed(2)"></span>
+                    Cobrar <span x-text="'$' + total.toFixed(2)"></span>
                 </button>
             </div>
         </div>
@@ -413,18 +406,18 @@
                         <button @click="metodo = 'efectivo'"
                             :class="metodo === 'efectivo' ? 'bg-emerald-600 text-black border-emerald-500 font-bold' : 'bg-[#111827] text-gray-400 border-gray-800'"
                             class="flex flex-col items-center justify-center py-3 rounded-xl border text-xs transition gap-1">
-                            <span>💵</span> Efectivo
+                            <span></span> Efectivo
                         </button>
 
-                        <button @click="alert('⚠️ La opción de Tarjeta se encuentra actualmente en mantenimiento.')"
+                        <button @click="alert('La opción de Tarjeta se encuentra actualmente en mantenimiento.')"
                             class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
-                            <span>💳</span> Tarjeta
+                            <span></span> Tarjeta
                             <span class="text-[9px] uppercase tracking-tighter opacity-80">Mantenimiento</span>
                         </button>
 
-                        <button @click="alert('⚠️ La opción de Transferencia se encuentra actualmente en mantenimiento.')"
+                        <button @click="alert('La opción de Transferencia se encuentra actualmente en mantenimiento.')"
                             class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
-                            <span>🏦</span> Transferencia
+                            <span>📱</span> Transferencia
                             <span class="text-[9px] uppercase tracking-tighter opacity-80">Mantenimiento</span>
                         </button>
                     </div>
@@ -452,8 +445,8 @@
                 <button @click="finalizarVenta()"
                     :disabled="(metodo === 'efectivo' && recibido < total) || procesandoVenta"
                     class="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-gray-950 font-black py-4 px-4 rounded-xl text-sm tracking-wide uppercase transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2">
-                    <span x-show="!procesandoVenta">✅ Finalizar Venta</span>
-                    <span x-show="procesandoVenta" style="display: none;">⏳ Procesando cobro...</span>
+                    <span x-show="!procesandoVenta">Finalizar Venta</span>
+                    <span x-show="procesandoVenta" style="display: none;">Procesando cobro...</span>
                 </button>
             </div>
         </div>
@@ -516,9 +509,9 @@
                 <div class="flex justify-between text-gray-600 text-[11px] pt-1">
                     <span>MÉTODO:</span>
                     <span class="font-bold text-black flex items-center gap-1">
-                        <span x-show="ticket.metodo === 'efectivo'">💵 Efectivo</span>
-                        <span x-show="ticket.metodo === 'tarjeta'">💳 Tarjeta</span>
-                        <span x-show="ticket.metodo === 'transferencia'">🏦 Transferencia</span>
+                        <span x-show="ticket.metodo === 'efectivo'">Efectivo</span>
+                        <span x-show="ticket.metodo === 'tarjeta'">Tarjeta</span>
+                        <span x-show="ticket.metodo === 'transferencia'">Transferencia</span>
                     </span>
                 </div>
                 <template x-if="ticket.metodo === 'efectivo'">
@@ -537,7 +530,7 @@
             <div class="border-b border-dashed border-gray-300 my-2"></div>
             <div class="text-center text-xs font-bold text-gray-700 pt-1">
                 <p>¡Gracias por su compra!</p>
-                <p class="text-[11px] font-normal text-gray-500 mt-0.5">Vuelva pronto 😊</p>
+                <p class="text-[11px] font-normal text-gray-500 mt-0.5">Vuelva pronto</p>
             </div>
         </div>
         <div class="w-full max-w-sm mt-4">

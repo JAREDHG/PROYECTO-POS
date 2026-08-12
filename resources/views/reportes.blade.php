@@ -47,10 +47,10 @@
 
         <div class="flex gap-2">
             <button @click="exportarExcel()" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
-                📊 Exportar Excel
+                Exportar Excel
             </button>
             <button @click="imprimirCorte()" class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
-                🖨️ Imprimir Corte
+                Imprimir Corte
             </button>
         </div>
     </div>
@@ -68,32 +68,28 @@
         </div>
 
         <div class="relative w-full sm:w-64">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-xs">🔍</span>
             <input type="text" 
                    x-model="busqueda" 
                    placeholder="Buscar folio o producto..." 
-                   class="w-full bg-[#18202c] border border-gray-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition">
+                   class="w-full bg-[#18202c] border border-gray-800 rounded-xl px-4 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition">
         </div>
     </div>
 
     <!-- TARJETAS SUPERIORES DE MÉTRICAS GENERALES (WEB) -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 no-print">
         <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl p-5 relative overflow-hidden shadow-xl">
-            <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-gray-300 flex items-center justify-center text-sm mb-4">📋</div>
             <div class="text-3xl font-black text-white font-mono" x-text="totalOperaciones"></div>
             <div class="text-xs font-semibold text-gray-400 mt-1">Total Operaciones</div>
             <div class="text-[10px] text-gray-500 mt-0.5">ventas del turno</div>
         </div>
 
         <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl p-5 relative overflow-hidden shadow-xl">
-            <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-amber-400 flex items-center justify-center text-sm mb-4">💰</div>
             <div class="text-3xl font-black text-white font-mono" x-text="'$' + ingresosTotales.toFixed(2)"></div>
             <div class="text-xs font-semibold text-gray-400 mt-1">Ingresos Totales</div>
             <div class="text-[10px] text-gray-500 mt-0.5">suma de ventas</div>
         </div>
 
         <div class="bg-[#131b26] border border-gray-800/80 rounded-2xl p-5 relative overflow-hidden shadow-xl">
-            <div class="w-9 h-9 rounded-xl bg-gray-800/60 text-purple-400 flex items-center justify-center text-sm mb-4">📊</div>
             <div class="text-3xl font-black text-white font-mono" x-text="'$' + ticketPromedio.toFixed(2)"></div>
             <div class="text-xs font-semibold text-gray-400 mt-1">Ticket Promedio</div>
             <div class="text-[10px] text-gray-500 mt-0.5">por operación</div>
@@ -105,8 +101,7 @@
         <h3 class="text-sm font-bold text-white">Desglose por Método de Pago</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-[#18202c] border border-gray-800 rounded-xl p-4 flex items-center gap-4">
-                <div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-lg">💵</div>
+            <div class="bg-[#18202c] border border-gray-800 rounded-xl p-4 flex items-center justify-between">
                 <div>
                     <div class="text-xs text-gray-400 font-medium">Efectivo</div>
                     <div class="text-xl font-bold text-white font-mono" x-text="'$' + totalEfectivo.toFixed(2)"></div>
@@ -114,8 +109,7 @@
                 </div>
             </div>
 
-            <div class="bg-[#18202c] border border-gray-800 rounded-xl p-4 flex items-center gap-4">
-                <div class="p-2.5 rounded-lg bg-blue-500/10 text-blue-400 text-lg">💳</div>
+            <div class="bg-[#18202c] border border-gray-800 rounded-xl p-4 flex items-center justify-between">
                 <div>
                     <div class="text-xs text-gray-400 font-medium">Tarjeta</div>
                     <div class="text-xl font-bold text-white font-mono" x-text="'$' + totalTarjeta.toFixed(2)"></div>
@@ -123,8 +117,7 @@
                 </div>
             </div>
 
-            <div class="bg-[#18202c] border border-gray-800 rounded-xl p-4 flex items-center gap-4">
-                <div class="p-2.5 rounded-lg bg-purple-500/10 text-purple-400 text-lg">📲</div>
+            <div class="bg-[#18202c] border border-gray-800 rounded-xl p-4 flex items-center justify-between">
                 <div>
                     <div class="text-xs text-gray-400 font-medium">Transferencia</div>
                     <div class="text-xl font-bold text-white font-mono" x-text="'$' + totalTransferencia.toFixed(2)"></div>
@@ -179,10 +172,7 @@
                             <td class="py-4 px-6 text-gray-300 max-w-xs truncate" x-text="v.productos"></td>
                             <td class="py-4 px-6 font-mono font-black text-white" x-text="'$' + (v.total || 0).toFixed(2)"></td>
                             <td class="py-4 px-6">
-                                <span class="inline-flex items-center gap-1.5 text-xs text-gray-300">
-                                    <span x-text="v.iconoMetodo"></span>
-                                    <span x-text="v.metodo"></span>
-                                </span>
+                                <span class="text-xs text-gray-300 font-semibold" x-text="v.metodo"></span>
                             </td>
                             <td class="py-4 px-6 text-gray-300" x-text="v.cajero"></td>
                             <td class="py-4 px-6 font-mono text-gray-400" x-text="v.hora"></td>
@@ -201,15 +191,12 @@
         </div>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- 📄 PLANTILLA INSTITUCIONAL EXCLUSIVA PARA IMPRESIÓN Y PDF -->
-    <!-- ================================================================= -->
+    <!-- PLANTILLA INSTITUCIONAL EXCLUSIVA PARA IMPRESIÓN Y PDF -->
     <div id="plantilla-impresion" class="p-6 text-black space-y-6">
         
-        <!-- ENCABEZADO INSTITUCIONAL DE LA UPT -->
+        <!-- ENCABEZADO INSTITUCIONAL -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #059669; padding-bottom: 12px;">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <!-- Logo UPT -->
                 <img src="{{ asset('imagenes/logo_uptex.png') }}" alt="Logo UPT" style="height: 55px; width: auto;">
                 <div>
                     <h2 style="font-size: 16px; font-weight: 800; color: #111827; margin: 0; text-transform: uppercase;">Universidad Politécnica de Texcoco</h2>
@@ -244,15 +231,15 @@
             <h4 style="font-size: 12px; font-weight: 700; color: #374151; margin: 0 0 8px 0; text-transform: uppercase;">Desglose por Método de Pago</h4>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 11px;">
                 <div>
-                    <span style="color: #6b7280;">💵 Efectivo:</span>
+                    <span style="color: #6b7280;">Efectivo:</span>
                     <strong style="color: #111827;" x-text="'$' + totalEfectivo.toFixed(2) + ' (' + opsEfectivo + ' ops)'"></strong>
                 </div>
                 <div>
-                    <span style="color: #6b7280;">💳 Tarjeta:</span>
+                    <span style="color: #6b7280;">Tarjeta:</span>
                     <strong style="color: #111827;" x-text="'$' + totalTarjeta.toFixed(2) + ' (' + opsTarjeta + ' ops)'"></strong>
                 </div>
                 <div>
-                    <span style="color: #6b7280;">📲 Transferencia:</span>
+                    <span style="color: #6b7280;">Transferencia:</span>
                     <strong style="color: #111827;" x-text="'$' + totalTransferencia.toFixed(2) + ' (' + opsTransferencia + ' ops)'"></strong>
                 </div>
             </div>
@@ -363,9 +350,6 @@ function reportesComponent() {
 
                     let metodoRaw = String((v && v.payment_method) ? v.payment_method : 'efectivo').toLowerCase();
                     let metodoFormatted = metodoRaw.charAt(0).toUpperCase() + metodoRaw.slice(1);
-                    let icono = '💵';
-                    if (metodoRaw === 'tarjeta') icono = '💳';
-                    if (metodoRaw === 'transferencia') icono = '📲';
 
                     return {
                         id: (v && v.id) ? v.id : Math.random(),
@@ -373,7 +357,6 @@ function reportesComponent() {
                         productos: resumenProductos,
                         total: Number((v && v.total) ? v.total : 0),
                         metodo: metodoFormatted,
-                        iconoMetodo: icono,
                         cajero: (v && v.user && v.user.name) ? v.user.name : 'Cajero General',
                         hora: horaStr
                     };

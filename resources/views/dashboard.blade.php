@@ -23,7 +23,7 @@
                 <h3 class="text-2xl font-black text-white font-mono" x-text="kpis.totalVentas"></h3>
                 <p class="text-[11px] text-gray-500 mt-1">Operaciones registradas</p>
             </div>
-            <div class="bg-blue-500/10 p-3 rounded-xl text-xl">📈</div>
+            <div class="bg-blue-500/10 p-3 rounded-xl text-xl"></div>
         </div>
 
         <div class="bg-[#1f2937] border border-gray-700/70 rounded-2xl p-5 flex items-center justify-between shadow-lg">
@@ -32,7 +32,7 @@
                 <h3 class="text-2xl font-black text-emerald-400 font-mono" x-text="formatoMoneda(kpis.ingresosTotales)"></h3>
                 <p class="text-[11px] text-gray-500 mt-1">Suma bruta de transacciones</p>
             </div>
-            <div class="bg-emerald-500/10 p-3 rounded-xl text-xl">💰</div>
+            <div class="bg-emerald-500/10 p-3 rounded-xl text-xl"></div>
         </div>
 
         <div class="bg-[#1f2937] border border-gray-700/70 rounded-2xl p-5 flex items-center justify-between shadow-lg">
@@ -41,16 +41,16 @@
                 <h3 class="text-2xl font-black text-amber-400 font-mono" x-text="formatoMoneda(kpis.ingresoEfectivo)"></h3>
                 <p class="text-[11px] text-gray-500 mt-1">Fondo ingresado en efectivo</p>
             </div>
-            <div class="bg-amber-500/10 p-3 rounded-xl text-xl">💵</div>
+            <div class="bg-amber-500/10 p-3 rounded-xl text-xl"></div>
         </div>
 
         <div class="bg-[#1f2937] border border-gray-700/70 rounded-2xl p-5 flex items-center justify-between shadow-lg">
             <div>
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Stock Bajo</span>
                 <h3 class="text-2xl font-black text-red-400 font-mono"><span x-text="kpis.productosBajoStock"></span> <span class="text-xs font-normal text-gray-400">items</span></h3>
-                <p class="text-[11px] text-red-400/80 mt-1">🔥 Requieren reabastecimiento</p>
+                <p class="text-[11px] text-red-400/80 mt-1"> Requieren reabastecimiento</p>
             </div>
-            <div class="bg-red-500/10 p-3 rounded-xl text-xl">⚠️</div>
+            <div class="bg-red-500/10 p-3 rounded-xl text-xl"></div>
         </div>
 
     </div>
@@ -149,7 +149,7 @@
             <div class="bg-[#111827]/50 p-4 rounded-xl border border-gray-800 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-lg">💵</span>
+                        <span class="text-lg"></span>
                         <span class="text-sm font-semibold text-gray-200">Efectivo</span>
                     </div>
                     <span class="font-mono font-bold text-lg text-white" x-text="formatoMoneda(metodosPago.efectivo.monto)"></span>
@@ -166,7 +166,7 @@
             <div class="bg-[#111827]/50 p-4 rounded-xl border border-gray-800 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-lg">💳</span>
+                        <span class="text-lg"></span>
                         <span class="text-sm font-semibold text-gray-200">Tarjeta</span>
                     </div>
                     <span class="font-mono font-bold text-lg text-white" x-text="formatoMoneda(metodosPago.tarjeta.monto)"></span>
@@ -183,7 +183,7 @@
             <div class="bg-[#111827]/50 p-4 rounded-xl border border-gray-800 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-lg">🏦</span>
+                        <span class="text-lg"></span>
                         <span class="text-sm font-semibold text-gray-200">Transferencia</span>
                     </div>
                     <span class="font-mono font-bold text-lg text-white" x-text="formatoMoneda(metodosPago.transferencia.monto)"></span>

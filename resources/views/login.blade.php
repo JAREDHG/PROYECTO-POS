@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" class="h-full bg-[#0d131d]">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
+
 <body class="h-full font-sans text-gray-200 antialiased flex items-center justify-center p-4">
 
     <div x-data="{
@@ -65,8 +67,8 @@
 
         <!-- LOGO Y TÍTULO -->
         <div class="text-center mb-8">
-            <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
-                🏪
+            <div class="w-40 h-40 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-2xl border border-emerald-500/30 bg-[#162a2b]">
+                <img src="{{ asset('imagenes/logo_pos.png') }}" alt="Logo POS" class="w-full h-full object-cover">
             </div>
             <h1 class="text-2xl font-black text-white tracking-wide">Acceso al POS</h1>
             <p class="text-xs text-gray-400 mt-1">Abarrotes El Surtidor</p>
@@ -81,26 +83,26 @@
         <form @submit.prevent="login()" class="space-y-5">
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Correo Electrónico</label>
-                <input type="email" 
-                       x-model="email" 
-                       required 
-                       placeholder="admin@pos.com" 
-                       class="w-full bg-[#0d131d] border border-gray-700 focus:border-emerald-500 text-white rounded-xl px-4 py-3 text-sm outline-none transition">
+                <input type="email"
+                    x-model="email"
+                    required
+                    placeholder="admin@pos.com"
+                    class="w-full bg-[#0d131d] border border-gray-700 focus:border-emerald-500 text-white rounded-xl px-4 py-3 text-sm outline-none transition">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Contraseña</label>
-                <input type="password" 
-                       x-model="password" 
-                       required 
-                       placeholder="••••••••" 
-                       class="w-full bg-[#0d131d] border border-gray-700 focus:border-emerald-500 text-white rounded-xl px-4 py-3 text-sm outline-none transition">
+                <input type="password"
+                    x-model="password"
+                    required
+                    placeholder="••••••••"
+                    class="w-full bg-[#0d131d] border border-gray-700 focus:border-emerald-500 text-white rounded-xl px-4 py-3 text-sm outline-none transition">
             </div>
 
-            <button type="submit" 
-                    :disabled="cargando" 
-                    class="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 text-sm disabled:opacity-50">
-                <span x-show="!cargando">🔐 INICIAR SESIÓN</span>
+            <button type="submit"
+                :disabled="cargando"
+                class="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 text-sm disabled:opacity-50">
+                <span x-show="!cargando">INICIAR SESIÓN</span>
                 <span x-show="cargando">Cargando...</span>
             </button>
         </form>
@@ -111,4 +113,5 @@
     </div>
 
 </body>
+
 </html>

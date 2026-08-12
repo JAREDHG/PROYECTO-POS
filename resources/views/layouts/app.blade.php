@@ -68,32 +68,32 @@
                 <!-- 1. Dashboard (Solo Admin) -->
                 <template x-if="esAdmin()">
                     <a href="{{ url('dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('dashboard') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
-                        <span>📊</span> Dashboard
+                        <span></span> Dashboard
                     </a>
                 </template>
                 
                 <!-- 2. Punto de Venta (Ajustado a /pos para no ir a la raíz / del login) -->
                 <a href="{{ url('pos') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('pos') || Request::is('/') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
-                    <span>💻</span> Punto de Venta
+                    <span></span> Punto de Venta
                 </a>
                 
                 <!-- 3. Inventario (Solo Admin) -->
                 <template x-if="esAdmin()">
                     <a href="{{ url('inventario') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('inventario') || Request::is('productos-inactivos') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
-                        <span>📦</span> Inventario
+                        <span></span> Inventario
                     </a>
                 </template>
                 
                 <!-- 4. Reportes (Solo Admin) -->
                 <template x-if="esAdmin()">
                     <a href="{{ url('reportes') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('reportes') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
-                        <span>📈</span> Reportes
+                        <span></span> Reportes
                     </a>
                 </template>
 
                 <!-- 5. Historial de Ventas (Visible para Todos) -->
                 <a href="{{ url('ventas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition {{ Request::is('ventas') ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-md' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
-                    <span>🧾</span> Historial de Ventas
+                    <span></span> Historial de Ventas
                 </a>
             </nav>
         </div>

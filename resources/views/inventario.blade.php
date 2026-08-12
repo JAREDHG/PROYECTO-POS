@@ -186,8 +186,8 @@
     },
 
     obtenerIcono(cat) {
-        const mapa = { 'Lácteos': '🥛', 'Panadería': '🍞', 'Bebidas': '🥤', 'Botanas': '🍿', 'Limpieza': '🧼', 'Básicos': '🌾' };
-        return mapa[cat] || '📦';
+        const mapa = { 'Lácteos': , 'Panadería': , 'Bebidas': , 'Botanas': , 'Limpieza': , 'Básicos':  };
+        return mapa[cat] || ;
     }
 }" class="space-y-6">
 
@@ -338,12 +338,12 @@
                     <div>
                         <label class="block text-gray-400 font-bold mb-1">Categoría</label>
                         <select x-model="form.category" class="w-full bg-[#101721] text-white rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500">
-                            <option value="Lácteos">🥛 Lácteos</option>
-                            <option value="Panadería">🍞 Panadería</option>
-                            <option value="Bebidas">🥤 Bebidas</option>
-                            <option value="Botanas">🍿 Botanas</option>
-                            <option value="Limpieza">🧼 Limpieza</option>
-                            <option value="Básicos">🌾 Básicos</option>
+                            <option value="Lácteos">Lácteos</option>
+                            <option value="Panadería">Panadería</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Botanas">Botanas</option>
+                            <option value="Limpieza">Limpieza</option>
+                            <option value="Básicos">Básicos</option>
                         </select>
                     </div>
                 </div>
@@ -413,12 +413,12 @@
                     <div>
                         <label class="block text-gray-400 font-bold mb-1">Categoría</label>
                         <select x-model="form.category" class="w-full bg-[#101721] text-white rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500">
-                            <option value="Lácteos">🥛 Lácteos</option>
-                            <option value="Panadería">🍞 Panadería</option>
-                            <option value="Bebidas">🥤 Bebidas</option>
-                            <option value="Botanas">🍿 Botanas</option>
-                            <option value="Limpieza">🧼 Limpieza</option>
-                            <option value="Básicos">🌾 Básicos</option>
+                            <option value="Lácteos">Lácteos</option>
+                            <option value="Panadería">Panadería</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Botanas">Botanas</option>
+                            <option value="Limpieza">Limpieza</option>
+                            <option value="Básicos">Básicos</option>
                         </select>
                     </div>
                 </div>

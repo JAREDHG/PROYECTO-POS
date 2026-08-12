@@ -12,7 +12,7 @@
     ticketSeleccionado: null,
     modalTicket: false,
 
-    // 🕐 FUNCIÓN PARA FORMATEAR LA FECHA A HORA LOCAL
+    // FUNCIÓN PARA FORMATEAR LA FECHA A HORA LOCAL
     formatFecha(fechaIso) {
         if (!fechaIso) return '';
         
@@ -100,7 +100,7 @@
     <!-- BARRA DE ACCESOS Y BUSCADOR -->
     <div class="flex justify-between items-center gap-4">
         <div class="relative flex-1 max-w-md">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">🔍</span>
+            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"></span>
             <input type="text"
                 x-model="busqueda"
                 placeholder="Buscar por folio de ticket o cajero..."
@@ -108,7 +108,7 @@
         </div>
         <button @click="cargarVentas()"
             class="bg-[#1f2937] border border-gray-700 hover:border-emerald-500 text-gray-300 hover:text-white px-4 py-3 rounded-xl text-sm font-medium transition flex items-center gap-2">
-            <span>🔄</span> Actualizar Lista
+            <span></span> Actualizar Lista
         </button>
     </div>
 
@@ -152,7 +152,7 @@
                     <template x-for="venta in ventasFiltradas" :key="venta.id">
                         <tr class="hover:bg-gray-800/50 transition">
                             <td class="p-4 font-mono font-bold text-emerald-400" x-text="venta.folio"></td>
-                            <!-- 🕒 FECHA FORMATEADA EN LA TABLA -->
+                            <!-- FECHA FORMATEADA EN LA TABLA -->
                             <td class="p-4 text-gray-300 text-xs font-mono" x-text="formatFecha(venta.fecha)"></td>
                             <td class="p-4 text-gray-300" x-text="venta.usuario"></td>
                             <td class="p-4">
@@ -161,7 +161,7 @@
                             <td class="p-4 text-right font-mono font-bold text-white" x-text="'$' + venta.total.toFixed(2)"></td>
                             <td class="p-4 text-center">
                                 <button @click="verTicket(venta)" class="bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-black text-xs font-bold px-3 py-1.5 rounded-lg transition">
-                                    Ver Ticket 🧾
+                                    Ver Ticket 
                                 </button>
                             </td>
                         </tr>
@@ -187,7 +187,7 @@
                     <span>FOLIO:</span>
                     <span x-text="ticketSeleccionado ? ticketSeleccionado.folio : ''"></span>
                 </div>
-                <!-- 🕒 FECHA FORMATEADA DENTRO DEL TICKET -->
+                <!-- FECHA FORMATEADA DENTRO DEL TICKET -->
                 <div class="flex justify-between">
                     <span>FECHA:</span>
                     <span x-text="formatFecha(ticketSeleccionado ? ticketSeleccionado.fecha : '')"></span>
