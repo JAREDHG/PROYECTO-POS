@@ -18,7 +18,7 @@ class SaleController extends Controller
     // 1. MÉTODO PARA EL HISTORIAL (GET)
     // =======================================================
     #[OA\Get(
-        path: "/sales",
+        path: "/api/sales",
         summary: "Obtener historial de ventas",
         description: "Recupera todas las ventas registradas en el sistema, ordenadas de la más reciente a la más antigua, incluyendo el detalle de los productos vendidos.",
         security: [["sanctum" => []]],
@@ -40,22 +40,22 @@ class SaleController extends Controller
         )
     )]
     public function index()
-{
-    // Carga explícita del cajero (user) y los productos vendidos (items.product)
-    $sales = Sale::with(['user', 'items.product'])->orderBy('created_at', 'desc')->get();
+    {
+        // Carga explícita del cajero (user) y los productos vendidos (items.product)
+        $sales = Sale::with(['user', 'items.product'])->orderBy('created_at', 'desc')->get();
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Historial recuperado con éxito.',
-        'data' => $sales
-    ], 200);
-}
+        return response()->json([
+            'success' => true,
+            'message' => 'Historial recuperado con éxito.',
+            'data' => $sales
+        ], 200);
+    }
 
     // =======================================================
     // 2. MÉTODO PARA PROCESAR LA VENTA (POST)
     // =======================================================
     #[OA\Post(
-        path: "/sales",
+        path: "/api/sales",
         summary: "Procesar nueva venta",
         description: "Registra una transacción de venta (carrito) de forma atómica y descuenta el stock en tiempo real.",
         security: [["sanctum" => []]],
