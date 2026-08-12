@@ -15,7 +15,11 @@ class ProductController extends Controller
         security: [["sanctum" => []]],
         tags: ["Productos"]
     )]
-    #[OA\Response(response: 200, description: "Lista de productos obtenida correctamente")]
+    #[OA\Response(
+        response: 200, 
+        description: "Lista de productos obtenida correctamente", 
+        content: new OA\JsonContent())]
+    #[OA\Response(response: 401, description: "No autenticado")]
     public function index()
     {
         return response()->json(Product::where('is_active', true)->get());
@@ -52,7 +56,7 @@ class ProductController extends Controller
             'sale_price'     => 'required|numeric|min:0',
             'stock'          => 'required|integer|min:0',
         ]);
-        
+
         return response()->json(Product::create($data), 201);
     }
 
@@ -109,7 +113,12 @@ class ProductController extends Controller
         security: [["sanctum" => []]],
         tags: ["Productos"]
     )]
-    #[OA\Response(response: 200, description: "Lista de productos inactivos obtenida correctamente")]
+    #[OA\Response(
+        response: 200, 
+        description: "Lista de productos inactivos obtenida correctamente",
+        content: new OA\JsonContent()
+    )]
+    #[OA\Response(response: 401, description: "No autenticado")]
     public function inactive()
     {
         return response()->json(Product::where('is_active', false)->get());
