@@ -228,42 +228,42 @@
     <!-- CONTENIDO PRINCIPAL DEL POS -->
     <div class="flex h-full gap-6">
         <div class="flex-1 flex flex-col h-full overflow-hidden">
-            
+
             <div class="mb-6 flex gap-4">
                 <div class="relative flex-1">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">🔍</span>
-                    <input type="text" 
-                           x-model="busqueda"
-                           placeholder="Buscar producto por nombre o SKU..." 
-                           class="w-full bg-[#1f2937] text-white placeholder-gray-500 text-sm rounded-xl pl-11 pr-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition" />
+                    <input type="text"
+                        x-model="busqueda"
+                        placeholder="Buscar producto por nombre o SKU..."
+                        class="w-full bg-[#1f2937] text-white placeholder-gray-500 text-sm rounded-xl pl-11 pr-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition" />
                 </div>
             </div>
 
             <!-- Categorías -->
             <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-thin">
-                <button @click="categoriaSeleccionada = 'Todos'" 
-                        :class="categoriaSeleccionada === 'Todos' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                        class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">Todos</button>
+                <button @click="categoriaSeleccionada = 'Todos'"
+                    :class="categoriaSeleccionada === 'Todos' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">Todos</button>
 
-                <button @click="categoriaSeleccionada = 'Lácteos'" 
-                        :class="categoriaSeleccionada === 'Lácteos' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                        class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🥛 Lácteos</button>
+                <button @click="categoriaSeleccionada = 'Lácteos'"
+                    :class="categoriaSeleccionada === 'Lácteos' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🥛 Lácteos</button>
 
-                <button @click="categoriaSeleccionada = 'Panadería'" 
-                        :class="categoriaSeleccionada === 'Panadería' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                        class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🍞 Panadería</button>
+                <button @click="categoriaSeleccionada = 'Panadería'"
+                    :class="categoriaSeleccionada === 'Panadería' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🍞 Panadería</button>
 
-                <button @click="categoriaSeleccionada = 'Bebidas'" 
-                        :class="categoriaSeleccionada === 'Bebidas' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                        class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🥤 Bebidas</button>
+                <button @click="categoriaSeleccionada = 'Bebidas'"
+                    :class="categoriaSeleccionada === 'Bebidas' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🥤 Bebidas</button>
 
-                <button @click="categoriaSeleccionada = 'Botanas'" 
-                        :class="categoriaSeleccionada === 'Botanas' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                        class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🍿 Botanas</button>
+                <button @click="categoriaSeleccionada = 'Botanas'"
+                    :class="categoriaSeleccionada === 'Botanas' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🍿 Botanas</button>
 
-                <button @click="categoriaSeleccionada = 'Limpieza'" 
-                        :class="categoriaSeleccionada === 'Limpieza' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
-                        class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🧻 Limpieza</button>
+                <button @click="categoriaSeleccionada = 'Limpieza'"
+                    :class="categoriaSeleccionada === 'Limpieza' ? 'bg-emerald-600 text-black font-bold' : 'bg-[#1f2937] text-gray-400 hover:text-white hover:bg-gray-800'"
+                    class="px-5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">🧻 Limpieza</button>
             </div>
 
             <!-- Grilla de Productos -->
@@ -288,16 +288,16 @@
                 </template>
 
                 <template x-for="producto in productosFiltrados" :key="producto.id">
-                    <div @click="addToCart(producto)" 
-                         class="bg-[#1f2937] border border-gray-700/60 rounded-2xl p-4 flex flex-col justify-between relative hover:border-emerald-500/50 cursor-pointer transition select-none group">
-                        
-                        <span class="absolute top-3 right-3 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-md" 
-                              x-text="producto.stock + ' pza'"></span>
+                    <div @click="addToCart(producto)"
+                        class="bg-[#1f2937] border border-gray-700/60 rounded-2xl p-4 flex flex-col justify-between relative hover:border-emerald-500/50 cursor-pointer transition select-none group">
+
+                        <span class="absolute top-3 right-3 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-md"
+                            x-text="producto.stock + ' pza'"></span>
 
                         <div class="mb-4">
-                            <span class="text-[11px] text-gray-500 block font-medium uppercase tracking-wider mb-1" 
-                                  x-text="producto.categoriaIcono + ' ' + producto.categoria"></span>
-                            <h3 class="font-semibold text-white text-sm leading-snug group-hover:text-emerald-400 transition" 
+                            <span class="text-[11px] text-gray-500 block font-medium uppercase tracking-wider mb-1"
+                                x-text="producto.categoriaIcono + ' ' + producto.categoria"></span>
+                            <h3 class="font-semibold text-white text-sm leading-snug group-hover:text-emerald-400 transition"
                                 x-text="producto.nombre"></h3>
                         </div>
 
@@ -315,8 +315,8 @@
                     <h3 class="font-bold text-white text-sm tracking-wide">Carrito Actual</h3>
                     <button x-show="cart.length > 0" @click="clearCart()" class="text-[10px] text-red-400 hover:underline">(Vaciar)</button>
                 </div>
-                <span class="bg-gray-800 text-gray-400 text-xs font-semibold px-2.5 py-1 rounded-md" 
-                      x-text="totalArticulos + ' Artículos'"></span>
+                <span class="bg-gray-800 text-gray-400 text-xs font-semibold px-2.5 py-1 rounded-md"
+                    x-text="totalArticulos + ' Artículos'"></span>
             </div>
 
             <div class="flex-1 overflow-y-auto p-4 space-y-3">
@@ -334,10 +334,26 @@
                             <span class="text-[11px] text-gray-400 font-mono" x-text="'$' + item.precio.toFixed(2) + ' c/u'"></span>
                         </div>
 
-                        <div class="flex items-center gap-2">
-                            <button @click="decreaseQty(item)" class="w-6 h-6 rounded-lg bg-gray-800 text-gray-300 flex items-center justify-center font-bold text-xs hover:bg-gray-700">-</button>
-                            <span class="text-xs font-bold text-white font-mono w-4 text-center" x-text="item.cantidad"></span>
-                            <button @click="increaseQty(item)" class="w-6 h-6 rounded-lg bg-gray-800 text-gray-300 flex items-center justify-center font-bold text-xs hover:bg-gray-700">+</button>
+                        <div class="flex items-center gap-1.5">
+                            <!-- Botón de Restar -->
+                            <button @click="decreaseQty(item)"
+                                class="w-6 h-6 rounded-lg bg-gray-800 text-gray-300 flex items-center justify-center font-bold text-xs hover:bg-gray-700 active:scale-95 transition-all">
+                                -
+                            </button>
+
+                            <!-- Input para Escribir Cantidad Directamente -->
+                            <input type="number"
+                                min="1"
+                                :max="item.stock"
+                                x-model.number="item.cantidad"
+                                @change="if (!item.cantidad || item.cantidad < 1) item.cantidad = 1; else if (item.stock && item.cantidad > item.stock) item.cantidad = item.stock;"
+                                class="w-12 h-6 text-center text-xs font-bold text-white font-mono bg-gray-900/90 border border-gray-700 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+
+                            <!-- Botón de Sumar -->
+                            <button @click="increaseQty(item)"
+                                class="w-6 h-6 rounded-lg bg-gray-800 text-gray-300 flex items-center justify-center font-bold text-xs hover:bg-gray-700 active:scale-95 transition-all">
+                                +
+                            </button>
                         </div>
 
                         <div class="text-right pl-3">
@@ -353,9 +369,9 @@
                     <span class="text-sm font-semibold text-gray-400">TOTAL</span>
                     <span class="text-2xl font-black text-emerald-400 font-mono" x-text="'$' + total.toFixed(2)"></span>
                 </div>
-                <button @click="recibido = total; openCobrar = true" 
-                        :disabled="cart.length === 0"
-                        class="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:hover:bg-emerald-500 text-gray-950 font-bold py-3.5 px-4 rounded-xl text-sm transition tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
+                <button @click="recibido = total; openCobrar = true"
+                    :disabled="cart.length === 0"
+                    class="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:hover:bg-emerald-500 text-gray-950 font-bold py-3.5 px-4 rounded-xl text-sm transition tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
                     💰 Cobrar <span x-text="'$' + total.toFixed(2)"></span>
                 </button>
             </div>
@@ -363,16 +379,16 @@
     </div>
 
     <!-- MODAL DE COBRO -->
-    <div x-show="openCobrar" 
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4" 
-         style="display: none;">
-        
+    <div x-show="openCobrar"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4"
+        style="display: none;">
+
         <div @click.away="openCobrar = false" class="bg-[#1f2937] border border-gray-700 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl">
             <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-[#1a222f]">
                 <h3 class="font-bold text-white text-base tracking-wide">Cobrar Venta</h3>
@@ -394,20 +410,20 @@
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-gray-400 tracking-wider uppercase">Método de Pago</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <button @click="metodo = 'efectivo'" 
-                                :class="metodo === 'efectivo' ? 'bg-emerald-600 text-black border-emerald-500 font-bold' : 'bg-[#111827] text-gray-400 border-gray-800'" 
-                                class="flex flex-col items-center justify-center py-3 rounded-xl border text-xs transition gap-1">
+                        <button @click="metodo = 'efectivo'"
+                            :class="metodo === 'efectivo' ? 'bg-emerald-600 text-black border-emerald-500 font-bold' : 'bg-[#111827] text-gray-400 border-gray-800'"
+                            class="flex flex-col items-center justify-center py-3 rounded-xl border text-xs transition gap-1">
                             <span>💵</span> Efectivo
                         </button>
 
-                        <button @click="alert('⚠️ La opción de Tarjeta se encuentra actualmente en mantenimiento.')" 
-                                class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
+                        <button @click="alert('⚠️ La opción de Tarjeta se encuentra actualmente en mantenimiento.')"
+                            class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
                             <span>💳</span> Tarjeta
                             <span class="text-[9px] uppercase tracking-tighter opacity-80">Mantenimiento</span>
                         </button>
 
-                        <button @click="alert('⚠️ La opción de Transferencia se encuentra actualmente en mantenimiento.')" 
-                                class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
+                        <button @click="alert('⚠️ La opción de Transferencia se encuentra actualmente en mantenimiento.')"
+                            class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 flex flex-col items-center justify-center py-3 rounded-xl text-xs transition gap-1 font-semibold">
                             <span>🏦</span> Transferencia
                             <span class="text-[9px] uppercase tracking-tighter opacity-80">Mantenimiento</span>
                         </button>
@@ -433,9 +449,9 @@
                 </div>
             </div>
             <div class="p-4 bg-[#1a222f] border-t border-gray-700">
-                <button @click="finalizarVenta()" 
-                        :disabled="(metodo === 'efectivo' && recibido < total) || procesandoVenta"
-                        class="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-gray-950 font-black py-4 px-4 rounded-xl text-sm tracking-wide uppercase transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2">
+                <button @click="finalizarVenta()"
+                    :disabled="(metodo === 'efectivo' && recibido < total) || procesandoVenta"
+                    class="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-gray-950 font-black py-4 px-4 rounded-xl text-sm tracking-wide uppercase transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2">
                     <span x-show="!procesandoVenta">✅ Finalizar Venta</span>
                     <span x-show="procesandoVenta" style="display: none;">⏳ Procesando cobro...</span>
                 </button>
@@ -444,16 +460,16 @@
     </div>
 
     <!-- MODAL DE TICKET -->
-    <div x-show="openTicket" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 scale-95"
-         x-transition:enter-end="opacity-100 scale-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 scale-100"
-         x-transition:leave-end="opacity-0 scale-95"
-         class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto" 
-         style="display: none;">
-        
+    <div x-show="openTicket"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto"
+        style="display: none;">
+
         <div class="bg-white text-gray-900 rounded-3xl p-6 sm:p-7 w-full max-w-sm shadow-2xl font-mono relative border border-gray-200 space-y-4">
             <div class="text-center space-y-1">
                 <h2 class="text-lg font-black tracking-tight text-black">Abarrotes El Surtidor</h2>
@@ -525,8 +541,8 @@
             </div>
         </div>
         <div class="w-full max-w-sm mt-4">
-            <button @click="nuevaVenta()" 
-                    class="w-full bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-extrabold py-3.5 px-4 rounded-xl text-sm transition tracking-wide flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20">
+            <button @click="nuevaVenta()"
+                class="w-full bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-extrabold py-3.5 px-4 rounded-xl text-sm transition tracking-wide flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20">
                 🛒 Nueva Venta
             </button>
         </div>

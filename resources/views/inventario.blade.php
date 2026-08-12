@@ -200,14 +200,14 @@
 
         <div class="flex items-center gap-3">
             <!-- BOTÓN PAPELERA DE PRODUCTOS INACTIVOS -->
-            <a href="/productos-inactivos" 
-               class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-gray-700/80 transition">
+            <a href="/productos-inactivos"
+                class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-gray-700/80 transition">
                 🗑️ Ver Papelera
             </a>
 
             <!-- BOTÓN AGREGAR PRODUCTO -->
-            <button @click="resetForm(); openAgregar = true" 
-                    class="bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-500/15">
+            <button @click="resetForm(); openAgregar = true"
+                class="bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-500/15">
                 <span class="text-base font-black">+</span> Agregar Producto
             </button>
         </div>
@@ -226,10 +226,10 @@
     <!-- BARRA DE BÚSQUEDA -->
     <div class="relative w-full max-w-md">
         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">🔍</span>
-        <input type="text" 
-               x-model="search" 
-               placeholder="Buscar producto, SKU o categoría..." 
-               class="w-full bg-[#1b2431] text-white placeholder-gray-500 text-xs rounded-xl pl-11 pr-4 py-3 border border-gray-700/80 focus:outline-none focus:border-emerald-500 transition" />
+        <input type="text"
+            x-model="search"
+            placeholder="Buscar producto, SKU o categoría..."
+            class="w-full bg-[#1b2431] text-white placeholder-gray-500 text-xs rounded-xl pl-11 pr-4 py-3 border border-gray-700/80 focus:outline-none focus:border-emerald-500 transition" />
     </div>
 
     <!-- TABLA DE PRODUCTOS -->
@@ -250,7 +250,7 @@
                 <tbody class="divide-y divide-gray-800/60 text-xs font-medium text-gray-300">
                     <template x-for="prod in productosFiltrados" :key="prod.id">
                         <tr class="hover:bg-gray-800/30 transition">
-                            
+
                             <!-- SKU -->
                             <td class="py-4 px-6 font-mono text-gray-400" x-text="prod.sku"></td>
 
@@ -278,9 +278,9 @@
                             <td class="py-4 px-6">
                                 <div class="flex items-center gap-2">
                                     <span class="px-2.5 py-1 rounded-md text-[11px] font-bold font-mono"
-                                          :class="prod.stock <= 10 ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'"
-                                          x-text="prod.stock + ' pzs'"></span>
-                                    
+                                        :class="prod.stock <= 10 ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'"
+                                        x-text="prod.stock + ' pzs'"></span>
+
                                     <template x-if="prod.stock <= 10">
                                         <span class="text-[10px] font-bold text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-500/20">⚠️ Bajo</span>
                                     </template>
@@ -291,10 +291,14 @@
                             <td class="py-4 px-6">
                                 <div class="flex items-center justify-center gap-3">
                                     <button @click="editarProducto(prod)" title="Editar producto" class="p-1.5 hover:bg-gray-700/60 rounded-lg text-gray-400 hover:text-emerald-400 transition">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
                                     </button>
                                     <button @click="prepararEliminar(prod)" title="Eliminar producto" class="p-1.5 hover:bg-gray-700/60 rounded-lg text-gray-400 hover:text-red-400 transition">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
                                     </button>
                                 </div>
                             </td>
@@ -344,17 +348,40 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-3">
+                    <!-- Precio de Compra (Permite números y punto decimal, bloquea e, E, -, +) -->
                     <div>
                         <label class="block text-gray-400 font-bold mb-1">P. Compra</label>
-                        <input type="number" step="0.01" x-model="form.purchase_price" class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
+                        <input type="number"
+                            step="0.01"
+                            min="0"
+                            x-model="form.purchase_price"
+                            @keydown="if (['e', 'E', '-', '+'].includes($event.key)) $event.preventDefault()"
+                            @input="$event.target.value = $event.target.value.replace(/[^0-9.]/g, '')"
+                            class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
                     </div>
+
+                    <!-- Precio de Venta (Permite números y punto decimal, bloquea e, E, -, +) -->
                     <div>
                         <label class="block text-gray-400 font-bold mb-1">P. Venta</label>
-                        <input type="number" step="0.01" x-model="form.sale_price" class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
+                        <input type="number"
+                            step="0.01"
+                            min="0"
+                            x-model="form.sale_price"
+                            @keydown="if (['e', 'E', '-', '+'].includes($event.key)) $event.preventDefault()"
+                            @input="$event.target.value = $event.target.value.replace(/[^0-9.]/g, '')"
+                            class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
                     </div>
+
+                    <!-- Stock (Solo enteros positivos: bloquea e, E, -, +, y el punto decimal .) -->
                     <div>
                         <label class="block text-gray-400 font-bold mb-1">Stock</label>
-                        <input type="number" x-model="form.stock" class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
+                        <input type="number"
+                            step="1"
+                            min="0"
+                            x-model="form.stock"
+                            @keydown="if (['e', 'E', '-', '+', '.'].includes($event.key)) $event.preventDefault()"
+                            @input="$event.target.value = $event.target.value.replace(/[^0-9]/g, '')"
+                            class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
                     </div>
                 </div>
             </div>
@@ -396,17 +423,40 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-3">
+                    <!-- Precio de Compra (Permite números y punto decimal, bloquea e, E, -, +) -->
                     <div>
                         <label class="block text-gray-400 font-bold mb-1">P. Compra</label>
-                        <input type="number" step="0.01" x-model="form.purchase_price" placeholder="0.00" class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
+                        <input type="number"
+                            step="0.01"
+                            min="0"
+                            x-model="form.purchase_price"
+                            @keydown="if (['e', 'E', '-', '+'].includes($event.key)) $event.preventDefault()"
+                            @input="$event.target.value = $event.target.value.replace(/[^0-9.]/g, '')"
+                            class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
                     </div>
+
+                    <!-- Precio de Venta (Permite números y punto decimal, bloquea e, E, -, +) -->
                     <div>
                         <label class="block text-gray-400 font-bold mb-1">P. Venta</label>
-                        <input type="number" step="0.01" x-model="form.sale_price" placeholder="0.00" class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
+                        <input type="number"
+                            step="0.01"
+                            min="0"
+                            x-model="form.sale_price"
+                            @keydown="if (['e', 'E', '-', '+'].includes($event.key)) $event.preventDefault()"
+                            @input="$event.target.value = $event.target.value.replace(/[^0-9.]/g, '')"
+                            class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
                     </div>
+
+                    <!-- Stock (Solo enteros positivos: bloquea e, E, -, +, y el punto decimal .) -->
                     <div>
-                        <label class="block text-gray-400 font-bold mb-1">Stock Inicial</label>
-                        <input type="number" x-model="form.stock" placeholder="0" class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
+                        <label class="block text-gray-400 font-bold mb-1">Stock</label>
+                        <input type="number"
+                            step="1"
+                            min="0"
+                            x-model="form.stock"
+                            @keydown="if (['e', 'E', '-', '+', '.'].includes($event.key)) $event.preventDefault()"
+                            @input="$event.target.value = $event.target.value.replace(/[^0-9]/g, '')"
+                            class="w-full bg-[#101721] text-white font-mono rounded-xl p-3 border border-gray-700 focus:outline-none focus:border-emerald-500" />
                     </div>
                 </div>
             </div>

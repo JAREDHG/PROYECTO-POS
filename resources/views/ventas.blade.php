@@ -12,6 +12,27 @@
     ticketSeleccionado: null,
     modalTicket: false,
 
+    // 🕐 FUNCIÓN PARA FORMATEAR LA FECHA A HORA LOCAL
+    formatFecha(fechaIso) {
+        if (!fechaIso) return '';
+        
+        // Convertimos la cadena ISO a objeto Date real
+        const date = new Date(fechaIso);
+        
+        // Si no es fecha válida, la regresamos tal cual
+        if (isNaN(date.getTime())) return fechaIso;
+
+        // Formato legible en español de México (ej. 11/08/2026, 11:44 p. m.)
+        return date.toLocaleString('es-MX', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    },
+
     async cargarVentas() {
         this.cargando = true;
         this.error = '';
@@ -35,7 +56,7 @@
 
             const data = await response.json();
             
-            // Blindaje: Aseguramos que 'listaVentas' sea siempre un arreglo, sin importar cómo responda el backend
+            // Blindaje: Aseguramos que 'listaVentas' sea siempre un arreglo
             const listaVentas = Array.isArray(data) ? data : (data.data || []);
 
             // Adaptamos los datos recibidos del backend
@@ -80,13 +101,13 @@
     <div class="flex justify-between items-center gap-4">
         <div class="relative flex-1 max-w-md">
             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">🔍</span>
-            <input type="text" 
-                   x-model="busqueda"
-                   placeholder="Buscar por folio de ticket o cajero..." 
-                   class="w-full bg-[#1f2937] text-white placeholder-gray-500 text-sm rounded-xl pl-11 pr-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition" />
+            <input type="text"
+                x-model="busqueda"
+                placeholder="Buscar por folio de ticket o cajero..."
+                class="w-full bg-[#1f2937] text-white placeholder-gray-500 text-sm rounded-xl pl-11 pr-4 py-3 border border-gray-700 focus:outline-none focus:border-emerald-500 transition" />
         </div>
-        <button @click="cargarVentas()" 
-                class="bg-[#1f2937] border border-gray-700 hover:border-emerald-500 text-gray-300 hover:text-white px-4 py-3 rounded-xl text-sm font-medium transition flex items-center gap-2">
+        <button @click="cargarVentas()"
+            class="bg-[#1f2937] border border-gray-700 hover:border-emerald-500 text-gray-300 hover:text-white px-4 py-3 rounded-xl text-sm font-medium transition flex items-center gap-2">
             <span>🔄</span> Actualizar Lista
         </button>
     </div>
@@ -131,7 +152,8 @@
                     <template x-for="venta in ventasFiltradas" :key="venta.id">
                         <tr class="hover:bg-gray-800/50 transition">
                             <td class="p-4 font-mono font-bold text-emerald-400" x-text="venta.folio"></td>
-                            <td class="p-4 text-gray-300 text-xs" x-text="venta.fecha"></td>
+                            <!-- 🕒 FECHA FORMATEADA EN LA TABLA -->
+                            <td class="p-4 text-gray-300 text-xs font-mono" x-text="formatFecha(venta.fecha)"></td>
                             <td class="p-4 text-gray-300" x-text="venta.usuario"></td>
                             <td class="p-4">
                                 <span class="bg-gray-800 text-gray-300 text-xs px-2.5 py-1 rounded-md uppercase font-semibold" x-text="venta.metodo"></span>
@@ -150,10 +172,10 @@
     </div>
 
     <!-- MODAL PARA REIMPRIMIR / VER TICKET PASADO -->
-    <div x-show="modalTicket" 
-         class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto" 
-         style="display: none;">
-        
+    <div x-show="modalTicket"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto"
+        style="display: none;">
+
         <div class="bg-white text-gray-900 rounded-3xl p-6 sm:p-7 w-full max-w-sm shadow-2xl font-mono relative border border-gray-200 space-y-4">
             <div class="text-center space-y-1">
                 <h2 class="text-lg font-black tracking-tight text-black">Abarrotes El Surtidor</h2>
@@ -165,8 +187,10 @@
                     <span>FOLIO:</span>
                     <span x-text="ticketSeleccionado ? ticketSeleccionado.folio : ''"></span>
                 </div>
+                <!-- 🕒 FECHA FORMATEADA DENTRO DEL TICKET -->
                 <div class="flex justify-between">
-                    <span x-text="ticketSeleccionado ? ticketSeleccionado.fecha : ''"></span>
+                    <span>FECHA:</span>
+                    <span x-text="formatFecha(ticketSeleccionado ? ticketSeleccionado.fecha : '')"></span>
                 </div>
                 <div class="flex justify-between">
                     <span>CAJERO:</span>
@@ -210,8 +234,8 @@
         </div>
 
         <div class="w-full max-w-sm mt-4 flex gap-3">
-            <button @click="modalTicket = false" 
-                    class="w-full bg-gray-700 hover:bg-gray-600 text-white font-extrabold py-3.5 px-4 rounded-xl text-sm transition tracking-wide shadow-xl">
+            <button @click="modalTicket = false"
+                class="w-full bg-gray-700 hover:bg-gray-600 text-white font-extrabold py-3.5 px-4 rounded-xl text-sm transition tracking-wide shadow-xl">
                 Cerrar Ventana
             </button>
         </div>
